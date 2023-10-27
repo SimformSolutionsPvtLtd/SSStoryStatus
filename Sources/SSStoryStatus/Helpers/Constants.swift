@@ -28,6 +28,8 @@ enum Sizes {
     static let storyGestureHeight: CGFloat = 50
     static let storyGestureWidth: CGFloat = 100
     static let storyProgressSpace: CGFloat = 8
+    static let closeButtonSize: CGFloat = 44
+    static let closeButtonPadding: CGFloat = 14
 }
 
 // MARK: - Custom Colors
