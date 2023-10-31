@@ -47,12 +47,21 @@ struct StoryDetailView: View {
     
     // MARK: - Private Views
     private var storyImageView: some View {
-        AsyncImage(url: URL(string: storyViewModel.getStory().mediaURL)) { image in
-            image
-                .resizable()
-                .scaledToFit()
-        } placeholder: {
-            ProgressView()
+        
+        CachedAsyncImage(url: URL(string: storyViewModel.getStory().mediaURL)) { phase in
+            switch phase {
+            case .success(let image):
+                image
+                    .resizable()
+                    .scaledToFit()
+            case .failure(_):
+                Image(systemName: Images.error)
+                    .onAppear {
+                        changeStory()
+                    }
+            default:
+                ProgressView()
+            }
         }
     }
 }

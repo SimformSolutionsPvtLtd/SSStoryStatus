@@ -10,6 +10,7 @@ import SwiftUI
 struct StoryHeaderView: View {
     
     // MARK: - Vars & Lets
+    @Environment(StoryViewModel.self) private var storyViewModel: StoryViewModel
     var user: UserModel
     let dismiss: DismissAction
     
@@ -36,11 +37,21 @@ struct StoryHeaderView: View {
     
     // MARK: - Private Views
     private var profileImageView: some View {
-        AsyncImage(url: URL(string: user.image)) { image in
-            image.profileModifier()
-        } placeholder: {
-            Image(systemName: Images.placeholderProfile)
-                .placeholerModifier()
+        
+        CachedAsyncImage(url: URL(string: user.image)) { phase in
+            switch phase {
+            case .success(let image):
+                image.profileModifier()
+            case .failure(_):
+                Image(systemName: Images.error)
+                    .placeholerModifier()
+            case .empty:
+                Image(systemName: Images.placeholderProfile)
+                    .placeholerModifier()
+            @unknown default:
+                Image(systemName: Images.placeholderProfile)
+                    .placeholerModifier()
+            }
         }
         .frame(width: Sizes.profileImageSmallWidth, height: Sizes.profileImageSmallHeight)
     }
@@ -54,6 +65,7 @@ struct StoryHeaderView: View {
     }
 }
 
+// MARK: - Preview
 #Preview {
     @Environment(\.dismiss) var dismiss
     
