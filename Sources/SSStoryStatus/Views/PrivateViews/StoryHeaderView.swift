@@ -9,18 +9,14 @@ import SwiftUI
 
 struct StoryHeaderView: View {
     
-    @Environment(StoryViewModel.self) private var storyViewModel: StoryViewModel
+    // MARK: - Vars & Lets
     var user: UserModel
+    let dismiss: DismissAction
     
+    // MARK: - Body
     var body: some View {
         HStack {
-            AsyncImage(url: URL(string: user.image)) { image in
-                image.profileModifier()
-            } placeholder: {
-                Image(systemName: Images.placeholderProfile)
-                    .placeholerModifier()
-            }
-            .frame(width: Sizes.profileImageSmallWidth, height: Sizes.profileImageSmallHeight)
+            profileImageView
             
             Text(user.name)
                 .foregroundColor(Color(.label))
@@ -30,21 +26,38 @@ struct StoryHeaderView: View {
             Spacer()
             
             Button {
-                storyViewModel.closeStoryView()
+                dismiss()
             } label: {
-                Image(systemName: Images.closeMark)
-                    .resizable()
-                    .padding(Sizes.closeButtonPadding)
-                    .tint(Color(.label))
-                    .frame(width: Sizes.closeButtonSize, height: Sizes.closeButtonSize)
+                closeButtonImage
             }
         }
         .padding(.horizontal)
     }
+    
+    // MARK: - Private Views
+    private var profileImageView: some View {
+        AsyncImage(url: URL(string: user.image)) { image in
+            image.profileModifier()
+        } placeholder: {
+            Image(systemName: Images.placeholderProfile)
+                .placeholerModifier()
+        }
+        .frame(width: Sizes.profileImageSmallWidth, height: Sizes.profileImageSmallHeight)
+    }
+    
+    private var closeButtonImage: some View {
+        Image(systemName: Images.closeMark)
+            .resizable()
+            .padding(Sizes.closeButtonPadding)
+            .tint(Color(.label))
+            .frame(width: Sizes.closeButtonSize, height: Sizes.closeButtonSize)
+    }
 }
 
 #Preview {
-    StoryHeaderView(user: mockData[1])
+    @Environment(\.dismiss) var dismiss
+    
+    return StoryHeaderView(user: mockData[1], dismiss: dismiss)
         .preferredColorScheme(.dark)
         .previewLayout(.sizeThatFits)
 }

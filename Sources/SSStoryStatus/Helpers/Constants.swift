@@ -22,7 +22,7 @@ enum Sizes {
     
     // MARK: Story
     static let storyProgressBarHeight: CGFloat = 3
-    static let progressBarSpacing: CGFloat = 5
+    static let progressBarSpacing: CGFloat = 6
     static let storyUserHStackSpace: CGFloat = 13
     static let storySpaceUserImage: CGFloat = 30
     static let storyGestureHeight: CGFloat = 50
@@ -48,5 +48,7 @@ enum Images {
 
 // MARK: - Durations
 public enum Durations {
-    public static let storyDefaultDuration: Int = 10
+    public static let storyDefaultDuration: Float = 10
+    static let progressUpdateInterval: TimeInterval = 0.1
+    static let longPressDuration: Double = 1
 }

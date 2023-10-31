@@ -9,77 +9,95 @@ import SwiftUI
 
 struct StoryDetailView: View {
     
-    @Environment(StoryViewModel.self) private var storyViewModel: StoryViewModel
-    var user: UserModel
-    @State private var currentStoryIndex = 0
+    // MARK: - Vars & Lets
+    @Environment(StoryViewModel.self) private var storyViewModel
+    @Environment(\.dismiss) private var dismiss
+    @GestureState private var isPressing = false
+    var currentUser: UserModel
     
+    // MARK: - Body
     var body: some View {
-        let story = getStory()
         
         GeometryReader { geo in
             VStack {
-                StoryHeaderView(user: user)
+                Group {
+                    StoryProgressView()
+                    
+                    StoryHeaderView(user: currentUser, dismiss: dismiss)
+                }
+                .opacity(storyViewModel.isProgressPaused ? 0 : 1)
+                .animation(.easeInOut(duration: 0.5), value: storyViewModel.isProgressPaused)
                 
                 ZStack {
                     Color.black
                     
-                    AsyncImage(url: URL(string: story.mediaURL)) { image in
-                        image
-                            .resizable()
-                            .scaledToFit()
-                    } placeholder: {
-                        ProgressView()
-                    }
+                    storyImageView
                 }
                 .onTapGesture { location in
-                    print(location)
-                    if location.x < geo.size.width / 2 {
-                        print("left")
-                        previousStory()
-                    } else {
-                        print("right")
-                        nextStory()
-                    }
+                    handleTapGesture(location: location, geo: geo)
                 }
+                .gesture(longPressGesture)
+                .onChange(of: isPressing, { _, newValue in
+                    handleLongPress(isPressed: newValue)
+                })
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+    
+    // MARK: - Private Views
+    private var storyImageView: some View {
+        AsyncImage(url: URL(string: storyViewModel.getStory().mediaURL)) { image in
+            image
+                .resizable()
+                .scaledToFit()
+        } placeholder: {
+            ProgressView()
+        }
     }
 }
 
 // MARK: - Private Methods
 extension StoryDetailView {
     
-    private func getStory() -> StoryModel {
-        user.stories[currentStoryIndex]
-    }
-    
     private func changeStory(direction: StoryDirection = .next) {
         switch direction {
         case .next:
-            break
+            storyViewModel.nextStory()
         case .previous:
-            break
+            storyViewModel.previousStory()
         }
     }
     
-    private func nextStory() {
-        guard currentStoryIndex < user.stories.count - 1 else {
-            storyViewModel.nextUser()
-            return
+    private func handleTapGesture(location: CGPoint, geo: GeometryProxy) {
+        if location.x < geo.size.width / 2 {
+            changeStory(direction: .previous)
+        } else {
+            changeStory()
         }
-        currentStoryIndex += 1
     }
     
-    private func previousStory() {
-        guard currentStoryIndex > 0 else {
-            storyViewModel.previousUser()
-            return
-        }
-        currentStoryIndex -= 1
+    private func handleLongPress(isPressed: Bool) {
+        storyViewModel.isProgressPaused = isPressed
     }
 }
 
+// MARK: - Gestures
+extension StoryDetailView {
+    
+    // To get touch down and touch up event during long press, we have to user another `LongPressGesture` with infinity duration
+    private var longPressGesture: some Gesture {
+        LongPressGesture(minimumDuration: Durations.longPressDuration)
+            .sequenced(before: LongPressGesture(minimumDuration: .infinity))
+            .updating($isPressing) { value, state, transaction in
+                if value == .second(true, nil) {
+                    state = true
+                }
+            }
+    }
+}
+
+// MARK: - Preview
 #Preview {
-    StoryDetailView(user: mockData[0])
+    StoryDetailView(currentUser: mockData[0])
 }
