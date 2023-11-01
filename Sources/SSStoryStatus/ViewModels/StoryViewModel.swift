@@ -67,6 +67,17 @@ class StoryViewModel {
         currentUser = userList[index - 1]
     }
     
+    func updateCurrentProgress(progress: Float, totalDuration: Float) {
+        let progressModel = storyProgressModels[currentStoryIndex]
+        
+        guard progressModel.canProgress() || totalDuration == 0 else {
+            nextStory()
+            return
+        }
+        progressModel.increaseProgress(by: Float(Durations.videoProgressUpdateInterval))
+        storyProgressModels[currentStoryIndex].totalDuration = totalDuration
+    }
+    
     private func updateProgresModel() {
         currentStoryIndex = 0
         storyProgressModels = currentUser.stories.map { story in
@@ -115,6 +126,6 @@ class StoryProgressModel: Identifiable {
     }
     
     func canProgress() -> Bool {
-        return progress < totalDuration
+        return Int(progress) < Int(totalDuration)
     }
 }

@@ -50,5 +50,11 @@ enum Images {
 public enum Durations {
     public static let storyDefaultDuration: Float = 10
     static let progressUpdateInterval: TimeInterval = 0.1
+    static let videoProgressUpdateInterval: TimeInterval = 0.5
     static let longPressDuration: Double = 1
+}
+
+// MARK: - Paths
+enum Paths {
+    static let cacheDirectoryName = "SSStoryDemo"
 }

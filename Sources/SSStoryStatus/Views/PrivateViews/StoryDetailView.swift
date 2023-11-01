@@ -31,7 +31,7 @@ struct StoryDetailView: View {
                 ZStack {
                     Color.black
                     
-                    storyImageView
+                    storyMediaView
                 }
                 .onTapGesture { location in
                     handleTapGesture(location: location, geo: geo)
@@ -46,8 +46,20 @@ struct StoryDetailView: View {
     }
     
     // MARK: - Private Views
-    private var storyImageView: some View {
+    @ViewBuilder
+    private var storyMediaView: some View {
+        let story = storyViewModel.getStory()
         
+        switch story.mediaType {
+        case .image:
+            getStoryImageView(story: story)
+        case .video:
+            getStoryVideoView(story: story)
+        }
+    }
+    
+    @ViewBuilder
+    private func getStoryImageView(story: StoryModel) -> some View {
         CachedAsyncImage(url: URL(string: storyViewModel.getStory().mediaURL)) { phase in
             switch phase {
             case .success(let image):
@@ -63,6 +75,23 @@ struct StoryDetailView: View {
                 ProgressView()
             }
         }
+    }
+    
+    @ViewBuilder
+    private func getStoryVideoView(story: StoryModel) -> some View {
+        @Bindable var storyViewModel = storyViewModel
+        
+        CachedAsyncVideo(id: story.id, url: URL(string: story.mediaURL), isPaused: $storyViewModel.isProgressPaused) { phase in
+            switch phase {
+            case .empty:
+                ProgressView()
+            case .success(let player):
+                player
+            case .failure(_):
+                Image(systemName: Images.error)
+            }
+        }
+        .onProgressChange(perform: updateStoryProgress)
     }
 }
 
@@ -88,6 +117,10 @@ extension StoryDetailView {
     
     private func handleLongPress(isPressed: Bool) {
         storyViewModel.isProgressPaused = isPressed
+    }
+    
+    private func updateStoryProgress(progress: Double, totalDuration: Double) {
+        storyViewModel.updateCurrentProgress(progress: Float(progress), totalDuration: Float(totalDuration))
     }
 }
 
