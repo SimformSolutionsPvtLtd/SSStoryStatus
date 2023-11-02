@@ -27,8 +27,8 @@ struct CachedAsyncImage<Content: View>: View {
     }
     
     // MARK: - Initializer
-    init(url: URL?, @ViewBuilder _ content: @escaping (_ phase: AsyncImagePhase) -> Content) {
-        imageModel = AsyncImageModel(imageUrl: url)
+    init(imageModel: AsyncImageModel, @ViewBuilder _ content: @escaping (_ phase: AsyncImagePhase) -> Content) {
+        self.imageModel = imageModel
         self.content = content
     }
 }

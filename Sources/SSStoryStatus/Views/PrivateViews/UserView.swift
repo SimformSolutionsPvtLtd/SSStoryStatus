@@ -10,6 +10,7 @@ import SwiftUI
 struct UserView: View {
     
     // MARK: - Vars & Lets
+    @State var imageModel = AsyncImageModel()
     var user: UserModel
     
     // MARK: - Body
@@ -33,7 +34,7 @@ struct UserView: View {
     
     // MARK: - Private Views
     private var profileImageView: some View {
-        CachedAsyncImage(url: URL(string: user.image)) { phase in
+        CachedAsyncImage(imageModel: imageModel) { phase in
             switch phase {
             case .success(let image):
                 image
@@ -50,6 +51,9 @@ struct UserView: View {
             }
         }
         .padding(Sizes.profileStrokeSpace)
+        .onAppear {
+            imageModel.getImage(url: URL(string: user.image))
+        }
     }
 }
 

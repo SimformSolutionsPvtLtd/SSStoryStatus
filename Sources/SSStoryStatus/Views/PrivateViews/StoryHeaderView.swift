@@ -11,6 +11,7 @@ struct StoryHeaderView: View {
     
     // MARK: - Vars & Lets
     @Environment(StoryViewModel.self) private var storyViewModel: StoryViewModel
+    @State var imageModel = AsyncImageModel()
     var user: UserModel
     let dismiss: DismissAction
     
@@ -38,7 +39,7 @@ struct StoryHeaderView: View {
     // MARK: - Private Views
     private var profileImageView: some View {
         
-        CachedAsyncImage(url: URL(string: user.image)) { phase in
+        CachedAsyncImage(imageModel: imageModel) { phase in
             switch phase {
             case .success(let image):
                 image.profileModifier()
@@ -54,6 +55,9 @@ struct StoryHeaderView: View {
             }
         }
         .frame(width: Sizes.profileImageSmallWidth, height: Sizes.profileImageSmallHeight)
+        .onAppear {
+            imageModel.getImage(url: URL(string: user.image))
+        }
     }
     
     private var closeButtonImage: some View {
