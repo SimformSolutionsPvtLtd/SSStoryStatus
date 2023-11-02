@@ -10,20 +10,23 @@ import SwiftUI
 struct StoryHeaderView: View {
     
     // MARK: - Vars & Lets
-    @Environment(StoryViewModel.self) private var storyViewModel: StoryViewModel
+    @Environment(StoryViewModel.self) private var storyViewModel
+    @Environment(\.storyStyle) private var storyStyle
     @State var imageModel = AsyncImageModel()
     var user: UserModel
+    let story: StoryModel
     let dismiss: DismissAction
     
     // MARK: - Body
     var body: some View {
-        HStack {
+        HStack(spacing: Sizes.headerSpacing) {
             profileImageView
             
             Text(user.name)
-                .foregroundColor(Color(.label))
-                .font(.system(size: Sizes.profileUsernameSize, design: .rounded))
-                .fontWeight(.medium)
+                .foregroundStyle(storyStyle.nameColor)
+                .font(storyStyle.nameFont)
+            
+            storyRelativeDateView
             
             Spacer()
             
@@ -54,18 +57,25 @@ struct StoryHeaderView: View {
                     .placeholerModifier()
             }
         }
-        .frame(width: Sizes.profileImageSmallWidth, height: Sizes.profileImageSmallHeight)
+        .frame(width: storyStyle.profileWidth, height: storyStyle.profileHeight)
         .onAppear {
             imageModel.getImage(url: URL(string: user.image))
         }
     }
     
+    private var storyRelativeDateView: some View {
+        Text(story.date.getRelative())
+            .foregroundStyle(storyStyle.dateColor)
+            .font(storyStyle.dateFont)
+    }
+    
     private var closeButtonImage: some View {
-        Image(systemName: Images.closeMark)
+        storyStyle.dismissImage
             .resizable()
-            .padding(Sizes.closeButtonPadding)
-            .tint(Color(.label))
-            .frame(width: Sizes.closeButtonSize, height: Sizes.closeButtonSize)
+            .scaledToFit()
+            .tint(storyStyle.dismissColor)
+            .padding(storyStyle.dismissPadding)
+            .frame(width: storyStyle.dismissWidth, height: storyStyle.dismissHeight)
     }
 }
 
@@ -73,7 +83,7 @@ struct StoryHeaderView: View {
 #Preview {
     @Environment(\.dismiss) var dismiss
     
-    return StoryHeaderView(user: mockData[1], dismiss: dismiss)
+    return StoryHeaderView(user: mockData[1],story: mockData[1].stories[0], dismiss: dismiss)
         .preferredColorScheme(.dark)
         .previewLayout(.sizeThatFits)
 }

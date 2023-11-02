@@ -12,41 +12,15 @@ import Observation
 class StoryViewModel {
     
     // MARK: - Vars & Lets
-    @ObservationIgnored var userList: [UserModel]
-    var currentUser: UserModel {
-        didSet {
-            updateProgresModel()
-        }
-    }
+    var userList: [UserModel]
+    var currentUser: UserModel
     var isStoryPresented = false
-    var currentStoryIndex: Int = 0
-    var isProgressPaused = false
-    var storyProgressModels: [StoryProgressModel] = []
+    private let isSorted: Bool
     
     // MARK: - Methods
     func viewStory(of user: UserModel) {
         currentUser = user
         isStoryPresented = true
-    }
-    
-    func getStory() -> StoryModel {
-        currentUser.stories[currentStoryIndex]
-    }
-    
-    func nextStory() {
-        guard currentStoryIndex < currentUser.stories.count - 1 else {
-            nextUser()
-            return
-        }
-        currentStoryIndex += 1
-    }
-    
-    func previousStory() {
-        guard currentStoryIndex > 0 else {
-            previousUser()
-            return
-        }
-        currentStoryIndex -= 1
     }
     
     func nextUser() {
@@ -67,21 +41,13 @@ class StoryViewModel {
         currentUser = userList[index - 1]
     }
     
-    func updateCurrentProgress(progress: Float, totalDuration: Float) {
-        let progressModel = storyProgressModels[currentStoryIndex]
+    func storySeen(user: UserModel, storyIndex: Int) {
+        guard let index = userList.firstIndex(of: user) else { return }
         
-        guard progressModel.canProgress() || totalDuration == 0 else {
-            nextStory()
-            return
-        }
-        progressModel.increaseProgress(by: Float(Durations.videoProgressUpdateInterval))
-        storyProgressModels[currentStoryIndex].totalDuration = totalDuration
-    }
-    
-    private func updateProgresModel() {
-        currentStoryIndex = 0
-        storyProgressModels = currentUser.stories.map { story in
-            StoryProgressModel(id: story.id, totalDuration: story.duration)
+        userList[index].stories[storyIndex].storyState = .seen
+        
+        if isSorted {
+            sortUserBySeen()
         }
     }
     
@@ -92,40 +58,17 @@ class StoryViewModel {
         return index
     }
     
+    func sortUserBySeen() {
+        userList.sort { !$0.isAllStoriesSeen && $1.isAllStoriesSeen }
+    }
+    
     // MARK: - Initializer
-    init(userList: [UserModel]) {
+    init(userList: [UserModel], sorted: Bool = false) {
         self.userList = userList
         self.currentUser = userList[0]
-    }
-}
-
-@Observable
-class StoryProgressModel: Identifiable {
-    
-    @ObservationIgnored let id: String
-    var totalDuration: Float
-    var progress: Float = 0
-    
-    init(id: String, totalDuration: Float) {
-        self.id = id
-        self.totalDuration = totalDuration
-    }
-    
-    func increaseProgress(by duration: Float = Float(Durations.progressUpdateInterval)) {
-        withAnimation(.linear(duration: TimeInterval(duration))) {
-            progress = (progress + duration).clamped(to: 0...totalDuration)
+        isSorted = sorted
+        if sorted {
+            sortUserBySeen()
         }
-    }
-    
-    func completeProgress() {
-        progress = totalDuration
-    }
-    
-    func resetProgress() {
-        progress = 0
-    }
-    
-    func canProgress() -> Bool {
-        return Int(progress) < Int(totalDuration)
     }
 }
