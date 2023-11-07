@@ -1,6 +1,6 @@
 //
 //  CircularProgressView.swift
-//
+//  SSStoryStatus
 //
 //  Created by Krunal Patel on 07/11/23.
 //
@@ -13,8 +13,8 @@ struct CircularProgressView: View {
     private let radius: CGFloat
     private let totalStories: Int
     private let seenStories: Int
-    private var colors: (seen: Color, unseen: Color)
-    private let lineWidth = Sizes.profileStrokeWidth
+    private var styles: (seen: AnyShapeStyle, unseen: AnyShapeStyle)
+    private let lineWidth: CGFloat
     private let dashLength: CGFloat
     private var space: CGFloat = 0
     
@@ -24,12 +24,12 @@ struct CircularProgressView: View {
             Circle()
                 .trim(from: calculateFraction(), to: 1)
                 .rotation(Angles.trimAngle)
-                .stroke(colors.unseen, style: StrokeStyle(lineWidth: lineWidth, lineCap: .round))
+                .stroke(styles.unseen, style: StrokeStyle(lineWidth: lineWidth, lineCap: .round))
             
             Circle()
                 .trim(from: 0, to: calculateFraction())
                 .rotation(Angles.trimAngle)
-                .stroke(colors.seen, style: StrokeStyle(lineWidth: lineWidth, lineCap: .round))
+                .stroke(styles.seen, style: StrokeStyle(lineWidth: lineWidth, lineCap: .round))
         }
         .clipShape(dashedCircle)
     }
@@ -41,11 +41,12 @@ struct CircularProgressView: View {
     }
     
     // MARK: - Initializer
-    init(radius: CGFloat, totalStories: Int, seenStories: Int = 0, colors: (seen: Color, unseen: Color) = (Colors.lightGray, Colors.lightGreen)) {
+    init<S1: ShapeStyle, S2: ShapeStyle>(radius: CGFloat, totalStories: Int, seenStories: Int = 0, styles: (seen: S1, unseen: S2) = (Colors.lightGray, Colors.lightGreen), lineWidth: CGFloat = Sizes.profileStrokeWidth) {
         self.radius = radius
         self.totalStories = totalStories
         self.seenStories = seenStories
-        self.colors = colors
+        self.styles = (AnyShapeStyle(styles.seen), AnyShapeStyle(styles.unseen))
+        self.lineWidth = lineWidth
         dashLength = (2 * .pi * radius) / CGFloat(totalStories)
         space = calculateSpace()
     }
@@ -66,7 +67,7 @@ extension CircularProgressView {
         }
     }
     
-    // Starting trim fraction for unseen stories, Ending trim fraciton for seen stories
+    // Starting trim fraction for unseen stories, Ending trim fraction for seen stories
     private func calculateFraction() -> CGFloat {
         CGFloat(seenStories) / CGFloat(totalStories)
     }

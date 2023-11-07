@@ -1,6 +1,6 @@
 //
 //  StoryView.swift
-//
+//  SSStoryStatus
 //
 //  Created by Krunal Patel on 26/10/23.
 //
@@ -9,8 +9,10 @@ import SwiftUI
 
 struct StoryView: View {
     
+    // MARK: - Vars & Lets
     @Environment(StoryViewModel.self) private var storyViewModel: StoryViewModel
     
+    // MARK: - Body
     var body: some View {
         @Bindable var bindableViewModel = storyViewModel
         
@@ -18,7 +20,7 @@ struct StoryView: View {
             TabView(selection: $bindableViewModel.currentUser) {
                 ForEach(storyViewModel.userList) { user in
                     StoryDetailView(currentUser: user)
-                        .tag(user)
+                        .tag(user as UserModel?)
                 }
             }
             .tabViewStyle(.page(indexDisplayMode: .never))

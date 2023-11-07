@@ -1,49 +1,60 @@
 //
 //  SSStoryStatus.swift
-//
+//  SSStoryStatus
 //
 //  Created by Krunal Patel on 26/10/23.
 //
 
 import SwiftUI
 
-public struct SSStoryStatus<Profile: View>: View {
+public struct SSStoryStatus: View {
     
     // MARK: - Vars & Lets
     @State var storyViewModel: StoryViewModel
-    @ViewBuilder public var profile: (UserModel) -> Profile
     
     // MARK: - Body
     public var body: some View {
-        ProfileListView(content: profile)
+        ProfileListView { user in
+            ProfileView(user: user)
+        }
         .fullScreenCover(isPresented: $storyViewModel.isStoryPresented) {
             StoryView()
         }
         .environment(storyViewModel)
     }
     
-    public init(users: [UserModel], sorted: Bool = false, @ViewBuilder profile: @escaping (UserModel) -> Profile) {
+    // MARK: - Initializer
+    public init(
+        users: [UserModel],
+        sorted: Bool = false,
+        cacheExpire date: Date? = Dates.defaultCacheExpiry
+    ) {
         storyViewModel = StoryViewModel(userList: users, sorted: sorted)
-        self.profile = profile
+        clearCache(date: date)
     }
 }
 
-// MARK: - Default Profile View
-extension SSStoryStatus where Profile == UserView {
+// MARK: - Public Methods
+extension SSStoryStatus {
     
-    public init(users: [UserModel], sorted: Bool = false) {
-        self.init(users: users, sorted: sorted) { user in
-            UserView(user: user)
-        }
+    // MARK: - Public Methods
+    public func changeImageCache<T: ImageCache>(cache: T) -> Self {
+        ImageCacheManager.shared.changeCache(cache)
+        return self
     }
 }
 
-// MARK: - Typealias
-public typealias StorySeenAction = (_ user: UserModel, _ storyIndex: Int) -> Void
+// MARK: - Private Methods
+extension SSStoryStatus {
+    
+    private func clearCache(date: Date?) {
+        guard let date else { return }
+        ImageCacheManager.shared.clearCache(olderThan: date)
+        VideoCacheManager.shared.clearCache(olderThan: date)
+    }
+}
 
 // MARK: - Preview
 #Preview {
-    SSStoryStatus(users: mockData) { user in
-        UserView(user: user)
-    }
+    SSStoryStatus(users: mockData)
 }

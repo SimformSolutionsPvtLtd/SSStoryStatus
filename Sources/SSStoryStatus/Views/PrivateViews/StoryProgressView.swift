@@ -1,6 +1,6 @@
 //
 //  StoryProgressView.swift
-//
+//  SSStoryStatus
 //
 //  Created by Krunal Patel on 30/10/23.
 //
@@ -11,21 +11,14 @@ struct StoryProgressView: View {
     
     // MARK: - Vars & Lets
     @Environment(UserViewModel.self) private var userViewModel
-    @Environment(\.storyStyle) private var storyStyle
     
     // MARK: - Body
     var body: some View {
         
         HStack(spacing: Sizes.progressBarSpacing) {
-            
             ForEach(userViewModel.progressModels) { story in
-                ProgressView(value: story.progress, total: story.totalDuration)
-                    .tint(storyStyle.progressbarColor)
-                    .progressViewStyle(.linear)
+                LinearProgressView(progress: story.progress, total: story.totalDuration)
             }
-        }
-        .onDisappear {
-            userViewModel.updateProgressState(isPaused: true)
         }
     }
 }

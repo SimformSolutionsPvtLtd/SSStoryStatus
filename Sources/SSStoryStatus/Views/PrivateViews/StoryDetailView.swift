@@ -1,6 +1,6 @@
 //
 //  StoryDetailView.swift
-//
+//  SSStoryStatus
 //
 //  Created by Krunal Patel on 27/10/23.
 //
@@ -14,75 +14,85 @@ struct StoryDetailView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.storySeenAction) private var onStorySeen
     @GestureState private var isPressing = false
-    @State var userViewModel = UserViewModel()
+    @State private var userViewModel = UserViewModel()
     var currentUser: UserModel
+    
+    var currentStory: StoryModel {
+        currentUser.stories[userViewModel.currentStoryIndex]
+    }
     
     // MARK: - Body
     var body: some View {
         
         GeometryReader { geo in
-            VStack {
-                Group {
-                    StoryProgressView()
-                    
-                    StoryHeaderView(user: currentUser, story: currentUser.stories[userViewModel.currentStoryIndex], dismiss: dismiss)
-                }
-                .opacity(userViewModel.isPaused ? 0 : 1)
-                .animation(.easeInOut(duration: 0.5), value: userViewModel.isPaused)
+            
+            ZStack {
+                Color.black
                 
-                ZStack {
-                    Color.black
-                    
-                    storyMediaView
+                storyMediaView
+                    .ignoresSafeArea()
+                    .scale(contentMode: storyViewModel.isZoomed ? .fill : .fit)
+            }
+            .overlay(alignment: .top) {
+                    StoryHeaderView(user: currentUser, story: currentStory, dismiss: dismiss)
+                        .opacity(userViewModel.isPaused ? 0 : 1)
+                        .animation(.easeInOut(duration: 0.5), value: userViewModel.isPaused)
+            }
+            .onTapGesture { location in
+                handleTapGesture(location: location, geo: geo)
+            }
+            .gesture(longPressGesture)
+            .gesture(magnificationGesture)
+            .overlay(alignment: .bottom) {
+                StoryFooterView(user: currentUser, storyIndex: userViewModel.currentStoryIndex)
+            }
+            .onChange(of: isPressing) { _, newValue in
+                handleLongPress(isPressed: newValue)
+            }
+            .onChange(of: userViewModel.currentStoryUserState) { _, newState in
+                handleUserChange(for: newState)
+            }
+            .onChange(of: userViewModel.currentStoryIndex) { oldValue, _ in
+                handleStorySeen(user: currentUser, storyIndex: oldValue)
+            }
+            .onChange(of: storyViewModel.currentUser) { oldValue, _ in
+                if let oldValue, currentUser == oldValue {
+                    handleStorySeen(user: oldValue, storyIndex: userViewModel.currentStoryIndex)
                 }
-                .onTapGesture { location in
-                    handleTapGesture(location: location, geo: geo)
+            }
+            .onChange(of: storyViewModel.isStoryPresented) { _, isPresented in
+                if !isPresented {
+                    handleStorySeen(user: currentUser, storyIndex: userViewModel.currentStoryIndex)
                 }
-                .gesture(longPressGesture)
-                .onChange(of: isPressing) { _, newValue in
-                    handleLongPress(isPressed: newValue)
-                }
-                .onChange(of: userViewModel.currentStoryUserState) { _, newState in
-                    handleUserChange(for: newState)
-                }
-                .onChange(of: userViewModel.currentStoryIndex) { oldValue, _ in
-                    handleStorySeen(user: currentUser, storyIndex: oldValue)
-                }
-                .onChange(of: storyViewModel.currentUser) { oldValue, _ in
-                    if currentUser == oldValue {
-                        handleStorySeen(user: oldValue, storyIndex: userViewModel.currentStoryIndex)
-                    }
-                }
-                .onChange(of: storyViewModel.isStoryPresented) { _, isPresented in
-                    if !isPresented {
-                        handleStorySeen(user: currentUser, storyIndex: userViewModel.currentStoryIndex)
-                    }
-                }
-                .onAppear {
-                    userViewModel.updateUser(user: currentUser)
-                    userViewModel.updateProgressState(isPaused: false)
-                }
+            }
+            .onAppear {
+                userViewModel.updateUser(user: currentUser)
+                userViewModel.updateProgressState(isPaused: false)
+            }
+            .onDisappear {
+                userViewModel.reset()
             }
             .rotation3DEffect(
                 getAngle(geo: geo),
                 axis: (x: 0, y: 1, z: 0),
                 anchor: geo.frame(in: .global).minX > 0 ? .leading : .trailing,
                 perspective: 2.5)
-            .environment(userViewModel)
         }
+        .environment(userViewModel)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
+}
+
+// MARK: - Private Views
+extension StoryDetailView {
     
-    // MARK: - Private Views
     @ViewBuilder
     private var storyMediaView: some View {
-        let story = currentUser.stories[userViewModel.currentStoryIndex]
-        
-        switch story.mediaType {
+        switch currentStory.mediaType {
         case .image:
-            getStoryImageView(story: story)
+            getStoryImageView(story: currentStory)
         case .video:
-            getStoryVideoView(story: story)
+            getStoryVideoView(story: currentStory)
         }
     }
     
@@ -93,7 +103,6 @@ struct StoryDetailView: View {
             case .success(let image):
                 image
                     .resizable()
-                    .scaledToFit()
             case .failure(_):
                 Image(systemName: Images.error)
                     .onAppear {
@@ -104,14 +113,13 @@ struct StoryDetailView: View {
             }
         }
         .onChange(of: userViewModel.currentStoryIndex, initial: true) {
-            userViewModel.imageModel.getImage(url: URL(string: story.mediaURL))
+            userViewModel.imageModel.getImage(url: URL(string: story.mediaURL), type: .story(story.date))
         }
     }
     
     @ViewBuilder
     private func getStoryVideoView(story: StoryModel) -> some View {
-        
-        CachedAsyncVideo(id: story.id, url: URL(string: story.mediaURL), isPaused: userViewModel.isPaused) { phase in
+        CachedAsyncVideo(videoModel: userViewModel.videoModel, isPaused: userViewModel.isPaused) { phase in
             switch phase {
             case .empty:
                 ProgressView()
@@ -123,10 +131,15 @@ struct StoryDetailView: View {
             }
         }
         .onProgressChange(perform: updateStoryProgress)
+        .task(id: storyViewModel.currentUser) {
+            if currentUser == storyViewModel.currentUser {
+                await userViewModel.videoModel.fetchVideo(url: URL(string: story.mediaURL), date: story.date)
+            }
+        }
     }
 }
 
-// MARK: - Private Methods
+// MARK: - Methods
 extension StoryDetailView {
     
     private func handleTapGesture(location: CGPoint, geo: GeometryProxy) {
@@ -157,7 +170,6 @@ extension StoryDetailView {
     }
     
     private func getAngle(geo: GeometryProxy) -> Angle {
-        
         // Converting offset to 45° rotation
         let progress = geo.frame(in: .global).minX / geo.size.width
         let rotationAngle: CGFloat = 45
@@ -169,11 +181,21 @@ extension StoryDetailView {
         storyViewModel.storySeen(user: user, storyIndex: storyIndex)
         onStorySeen?(user, storyIndex)
     }
-    
 }
 
 // MARK: - Gestures
 extension StoryDetailView {
+    
+    private var magnificationGesture: some Gesture {
+        MagnificationGesture()
+            .onChanged{ value in
+                if value < 0.8 {
+                    storyViewModel.isZoomed = false
+                } else if value > 1.3 {
+                    storyViewModel.isZoomed = true
+                }
+            }
+    }
     
     // To get touch down and touch up event during long press, we have to user another `LongPressGesture` with infinity duration
     private var longPressGesture: some Gesture {
@@ -187,7 +209,11 @@ extension StoryDetailView {
     }
 }
 
+// MARK: - Typealias
+public typealias StorySeenAction = (_ user: UserModel, _ storyIndex: Int) -> Void
+
 // MARK: - Preview
 #Preview {
     StoryDetailView(currentUser: mockData[0])
 }
+

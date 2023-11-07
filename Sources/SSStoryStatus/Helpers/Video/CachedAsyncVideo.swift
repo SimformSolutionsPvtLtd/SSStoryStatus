@@ -1,6 +1,6 @@
 //
 //  CachedAsyncVideo.swift
-//
+//  SSStoryStatus
 //
 //  Created by Krunal Patel on 01/11/23.
 //
@@ -11,7 +11,7 @@ import AVKit
 struct CachedAsyncVideo<Content: View>: View {
     
     // MARK: - Vars & Lets
-    @State var videoModel: VideoModel
+    let videoModel: VideoModel
     var isPaused: Bool
     @ViewBuilder let content: (AsyncVideoPhase) -> Content
     var onProgressChange: ProgressType? = nil
@@ -28,12 +28,6 @@ struct CachedAsyncVideo<Content: View>: View {
                 content(.failure(error))
             }
         }
-        .task(priority: .userInitiated) {
-            await videoModel.fetchVideo()
-        }
-        .task(priority: .userInitiated) {
-            await videoModel.fetchDuration()
-        }
         .onChange(of: videoModel.progress) { _, progress in
             if progress <= videoModel.duration {
                 onProgressChange?(progress, videoModel.duration)
@@ -49,14 +43,14 @@ struct CachedAsyncVideo<Content: View>: View {
     }
     
     // MARK: - Initializer
-    init(id: String, url: URL?, isPaused: Bool, @ViewBuilder _ content: @escaping (_ phase: AsyncVideoPhase) -> Content) {
-        _videoModel = State(wrappedValue: VideoModel(id: id, url: url))
+    init(videoModel: VideoModel, isPaused: Bool, @ViewBuilder _ content: @escaping (_ phase: AsyncVideoPhase) -> Content) {
+        self.videoModel = videoModel
         self.content = content
         self.isPaused = isPaused
     }
 }
 
-// MARK: - Private Functions
+// MARK: - Private Views
 extension CachedAsyncVideo {
     
     @ViewBuilder
@@ -65,7 +59,7 @@ extension CachedAsyncVideo {
     }
 }
 
-// MARK: - Modifiers
+// MARK: - Metods
 extension CachedAsyncVideo {
     typealias ProgressType = (_ progress: Double, _ totalDuration: Double) -> Void
     
@@ -76,6 +70,7 @@ extension CachedAsyncVideo {
     }
 }
 
+// MARK: - Enums
 // MARK: - AsyncVideoPhase
 enum AsyncVideoPhase {
     case empty

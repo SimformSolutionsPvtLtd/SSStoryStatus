@@ -1,6 +1,6 @@
 //
 //  AsyncImageModel.swift
-//
+//  SSStoryStatus
 //
 //  Created by Krunal Patel on 31/10/23.
 //
@@ -9,29 +9,56 @@ import UIKit
 import Combine
 
 @Observable
-class AsyncImageModel: ObservableObject {
+public class AsyncImageModel: ObservableObject {
     
     // MARK: - Vars & Lets
+    var imageState: ImageState = .loading
     @ObservationIgnored private let cacheManager = ImageCacheManager.shared
     @ObservationIgnored private var cancellables: Set<AnyCancellable> = []
-    var imageState: ImageState = .loading
+    @ObservationIgnored var size: CGSize? = nil
+    @ObservationIgnored var shouldResizeProfile = true
+    @ObservationIgnored var url: URL?
     
     // MARK: - Methods
-    func getImage(url: URL?) {
+    func getImage(url: URL?, type: ImageType) {
+        guard !isURLSame(url) else { return }
+        
         imageState = .loading
         guard let url else {
             imageState = .error(.invalidUrl)
             return
         }
+        self.url = url
         
-        if let cacheImage = cacheManager.getImage(for: url) {
-            imageState = .success(cacheImage)
+        if let cacheImage = cacheManager.getImage(for: url, type: type) {
+            setImage(cacheImage)
         } else {
-            downloadAndCacheImage(url: url)
+            downloadAndCacheImage(url: url, type: type)
         }
     }
     
-    private func downloadAndCacheImage(url: URL?) {
+    func enableResizing(size: CGSize) {
+        self.size = size
+    }
+    
+    func disableResizing() {
+        size = nil
+    }
+    
+    private func setImage(_ image: UIImage) {
+        var newImage = image
+        if let size,
+           let resizedImage = image.preparingThumbnail(of: size) {
+            newImage = resizedImage
+        }
+        imageState = .success(newImage)
+    }
+    
+    private func isURLSame(_ newUrl: URL?) -> Bool {
+        return url == newUrl
+    }
+    
+    private func downloadAndCacheImage(url: URL?, type: ImageType) {
         guard let url else {
             imageState = .error(.invalidUrl)
             return
@@ -46,8 +73,8 @@ class AsyncImageModel: ObservableObject {
             } receiveValue: { [weak self] image in
                 guard let self, let image else { return }
                 
-                self.imageState = .success(image)
-                self.cacheManager.addImage(image: image, url: url)
+                self.setImage(image)
+                self.cacheManager.addImage(image: image, url: url, type: type)
             }
             .store(in: &cancellables)
     }

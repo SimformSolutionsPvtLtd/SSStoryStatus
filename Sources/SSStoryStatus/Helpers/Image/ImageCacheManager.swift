@@ -1,6 +1,6 @@
 //
 //  ImageCacheManager.swift
-//  
+//  SSStoryStatus
 //
 //  Created by Krunal Patel on 31/10/23.
 //
@@ -8,35 +8,36 @@
 import UIKit
 
 class ImageCacheManager {
-
-    // MARK: - Cache instance
-    private let imageCache: NSCache<NSURL, UIImage> = {
-        let cache = NSCache<NSURL, UIImage>()
-        cache.countLimit = 100
-        cache.totalCostLimit = 1024 * 1024 * 100
-        return cache
-    }()
+    
+    // MARK: - Cache Instance
+    private var imageCache: any ImageCache
     
     // MARK: - Methods
-    func addImage(image: UIImage, url: URL) {
-        imageCache.setObject(image, forKey: url as NSURL)
+    func addImage(image: UIImage, url: URL, type: ImageType) {
+        imageCache.set(image, url: url, type: type)
     }
     
-    func getImage(for url: URL) -> UIImage? {
-        return imageCache.object(forKey: url as NSURL)
+    func getImage(for url: URL, type: ImageType) -> UIImage? {
+        return imageCache.get(for: url, type: type)
     }
     
-    func removeImage(for url: URL) {
-        return imageCache.removeObject(forKey: url as NSURL)
+    func removeImage(for url: URL, type: ImageType) {
+        return imageCache.remove(for: url, type: type)
     }
     
-    func clearCache() {
-        imageCache.removeAllObjects()
+    func clearCache(olderThan date: Date) {
+        (imageCache as? StorageImageCache)?.clearCache(olderThan: date)
     }
     
-    // MARK: - Shared instance
-    static let shared = ImageCacheManager()
+    func changeCache<T: ImageCache>(_ cache: T) {
+        self.imageCache = cache
+    }
+    
+    // MARK: - Shared Instance
+    static var shared: ImageCacheManager = ImageCacheManager()
     
     // MARK: - Initializer
-    private init() { }
+    private init(cache: any ImageCache = .storage) {
+        self.imageCache = cache
+    }
 }

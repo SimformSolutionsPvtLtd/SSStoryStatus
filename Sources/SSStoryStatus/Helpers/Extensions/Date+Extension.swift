@@ -1,13 +1,13 @@
 //
-//  Date+Extention.swift
-//
+//  Date+Extension.swift
+//  SSStoryStatus
 //
 //  Created by Krunal Patel on 02/11/23.
 //
 
 import Foundation
 
-// MARK: - Date Extentions
+// MARK: - Date Extensions
 extension Date {
     
     // MARK: - Relative Date

@@ -1,6 +1,6 @@
 //
 //  StoryViewModel.swift
-//
+//  SSStoryStatus
 //
 //  Created by Krunal Patel on 26/10/23.
 //
@@ -13,8 +13,9 @@ class StoryViewModel {
     
     // MARK: - Vars & Lets
     var userList: [UserModel]
-    var currentUser: UserModel
+    var currentUser: UserModel?
     var isStoryPresented = false
+    var isZoomed: Bool = false
     private let isSorted: Bool
     
     // MARK: - Methods
@@ -26,7 +27,7 @@ class StoryViewModel {
     func nextUser() {
         guard let index = getCurrentUserIndex(),
               index + 1 < userList.count else {
-            isStoryPresented = false
+            stopStoryPresent()
             return
         }
         currentUser = userList[index + 1]
@@ -35,7 +36,7 @@ class StoryViewModel {
     func previousUser() {
         guard let index = getCurrentUserIndex(),
               index > 0 else {
-            isStoryPresented = false
+            stopStoryPresent()
             return
         }
         currentUser = userList[index - 1]
@@ -51,8 +52,14 @@ class StoryViewModel {
         }
     }
     
+    func stopStoryPresent() {
+        isStoryPresented = false
+        currentUser = nil
+    }
+    
     private func getCurrentUserIndex() -> Int? {
-        guard let index = userList.firstIndex(where: { $0.id == currentUser.id }) else {
+        guard let currentUser,
+              let index = userList.firstIndex(where: { $0.id == currentUser.id }) else {
             return nil
         }
         return index
@@ -65,7 +72,6 @@ class StoryViewModel {
     // MARK: - Initializer
     init(userList: [UserModel], sorted: Bool = false) {
         self.userList = userList
-        self.currentUser = userList[0]
         isSorted = sorted
         if sorted {
             sortUserBySeen()
