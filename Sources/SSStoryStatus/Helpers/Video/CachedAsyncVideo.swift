@@ -59,7 +59,7 @@ extension CachedAsyncVideo {
     }
 }
 
-// MARK: - Metods
+// MARK: - Methods
 extension CachedAsyncVideo {
     typealias ProgressType = (_ progress: Double, _ totalDuration: Double) -> Void
     

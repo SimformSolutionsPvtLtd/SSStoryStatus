@@ -15,7 +15,7 @@ public enum Sizes {
     static let profileImageSmallWidth: CGFloat = 40
     static let profileImageSmallHeight: CGFloat = 40
     static let profileVStackSpace: CGFloat = 6
-    static let profileViewSpace: CGFloat = 12
+    public static let profileViewSpace: CGFloat = 12
     static let profileStrokeSpace: CGFloat = 6
     static let profileStrokeWidth: CGFloat = 3
     static let profileUsernameSize: CGFloat = 16

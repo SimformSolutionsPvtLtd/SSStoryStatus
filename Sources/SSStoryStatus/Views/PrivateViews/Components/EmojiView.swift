@@ -32,6 +32,12 @@ struct EmojiView: View {
 }
 
 // MARK: - Typealias
+/// A closure that is called when emoji is pressed by user.
+///
+/// - Parameters:
+///   - emoji: The emoji selected by user.
+///   - user: The user containing story.
+///   - storyIndex: The index of story.
 public typealias EmojiSelectAction = (_ emoji: String, _ user: UserModel, _ storyIndex: Int) -> Void
 
 // MARK: - Preview

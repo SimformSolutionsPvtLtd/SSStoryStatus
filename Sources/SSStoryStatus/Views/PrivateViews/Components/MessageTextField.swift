@@ -40,6 +40,12 @@ extension MessageTextField {
 
 
 // MARK: - Typealias
+/// A closure that is called when message is send.
+///
+/// - Parameters:
+///   - message: The text message send by.
+///   - user: The user containing story.
+///   - storyIndex: The index of story.
 public typealias MessageSendAction = (_ message: String, _ user: UserModel, _ storyIndex: Int) -> Void
 
 // MARK: - Preview

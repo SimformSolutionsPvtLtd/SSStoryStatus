@@ -196,8 +196,9 @@ extension StoryDetailView {
                 }
             }
     }
-    
-    // To get touch down and touch up event during long press, we have to user another `LongPressGesture` with infinity duration
+
+    // To get touch down and touch up event during long press,
+    // we have to user another `LongPressGesture` with infinity duration
     private var longPressGesture: some Gesture {
         LongPressGesture(minimumDuration: Durations.longPressDuration)
             .sequenced(before: LongPressGesture(minimumDuration: .infinity))

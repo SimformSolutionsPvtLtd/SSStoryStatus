@@ -12,7 +12,7 @@ class VideoCacheManager {
     
     // MARK: - Vars & Lets
     private let fileManager = FileManager.default
-    private let videoRetriver = VideoRetriver.shared
+    private let videoRetriever = VideoRetriever.shared
     
     private lazy var cacheDirectoryURL = {
         let url = try! fileManager.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
@@ -35,7 +35,7 @@ class VideoCacheManager {
     func saveVideo(avAsset: AVAsset, remoteUrl: URL, date: Date = .now) async throws -> URL {
         let fileURL = getFileUrl(for: remoteUrl.md5String)
         
-        try await videoRetriver.exportVideo(avAsset: avAsset, outputURL: fileURL)
+        try await videoRetriever.exportVideo(avAsset: avAsset, outputURL: fileURL)
         try setCreationDate(for: fileURL.path(), date: date)
         return fileURL
     }
