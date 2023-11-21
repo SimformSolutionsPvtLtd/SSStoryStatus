@@ -34,11 +34,11 @@ public struct StoryModel: Identifiable, Hashable {
     let mediaURL: String
     let date: Date
     let information: String
-    let duration: Int
+    let duration: Float
     let mediaType: MediaType
     var storyState: StoryState
     
-    public init(id: String = UUID().uuidString, mediaURL: String, date: Date, information: String, duration: Int = Durations.storyDefaultDuration, mediaType: MediaType, storyState: StoryState = .unseen) {
+    public init(id: String = UUID().uuidString, mediaURL: String, date: Date, information: String, duration: Float = Durations.storyDefaultDuration, mediaType: MediaType, storyState: StoryState = .unseen) {
         self.id = id
         self.mediaURL = mediaURL
         self.date = date

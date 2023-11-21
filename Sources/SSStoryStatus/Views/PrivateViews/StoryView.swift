@@ -15,19 +15,19 @@ struct StoryView: View {
         @Bindable var bindableViewModel = storyViewModel
         
         ZStack {
-            TabView(selection: $bindableViewModel.currentUser.id) {
+            TabView(selection: $bindableViewModel.currentUser) {
                 ForEach(storyViewModel.userList) { user in
-                    StoryDetailView(user: user)
-                        .tag(user.id)
+                    StoryDetailView(currentUser: user)
+                        .tag(user)
                 }
             }
             .tabViewStyle(.page(indexDisplayMode: .never))
-            
         }
         .preferredColorScheme(.dark)
     }
 }
 
+// MARK: - Preview
 #Preview {
     StoryView()
         .environment(StoryViewModel(userList: mockData))
