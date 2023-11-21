@@ -13,6 +13,9 @@ public struct SSStoryStatus: View {
     
     public var body: some View {
         ProfileListView()
+            .fullScreenCover(isPresented: $storyViewModel.isStoryPresented) {
+                StoryView()
+            }
             .environment(storyViewModel)
     }
     

@@ -16,6 +16,9 @@ struct ProfileListView: View {
             LazyHStack(spacing: Sizes.profileViewSpace) {
                 ForEach(storyViewModel.userList) { user in
                     UserView(user: user)
+                        .onTapGesture {
+                            storyViewModel.viewStory(of: user)
+                        }
                 }
             }
             .fixedSize()
