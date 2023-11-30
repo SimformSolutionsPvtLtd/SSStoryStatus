@@ -31,7 +31,9 @@ struct StoryProgressView: View {
         .onChange(of: storyViewModel.isProgressPaused) { _, newValue in
             handleTimer(isPaused: newValue)
         }
-        .onAppear(perform: startTimer)
+        .onAppear {
+            handleTimer(isPaused: false)
+        }
         .onDisappear(perform: stopTimer)
     }
 }
@@ -63,6 +65,11 @@ extension StoryProgressView {
     }
     
     private func handleTimer(isPaused: Bool) {
+        guard storyViewModel.getStory().mediaType != .video else {
+            stopTimer()
+            return
+        }
+        
         if isPaused {
             stopTimer()
         } else {
