@@ -13,6 +13,7 @@ struct StoryDetailView: View {
     @Environment(StoryViewModel.self) private var storyViewModel
     @Environment(\.dismiss) private var dismiss
     @GestureState private var isPressing = false
+    @State var imageModel = AsyncImageModel()
     var currentUser: UserModel
     
     // MARK: - Body
@@ -60,7 +61,7 @@ struct StoryDetailView: View {
     
     @ViewBuilder
     private func getStoryImageView(story: StoryModel) -> some View {
-        CachedAsyncImage(url: URL(string: storyViewModel.getStory().mediaURL)) { phase in
+        CachedAsyncImage(imageModel: imageModel) { phase in
             switch phase {
             case .success(let image):
                 image
@@ -74,6 +75,9 @@ struct StoryDetailView: View {
             default:
                 ProgressView()
             }
+        }
+        .onChange(of: storyViewModel.currentStoryIndex, initial: true) {
+            imageModel.getImage(url: URL(string: story.mediaURL))
         }
     }
     

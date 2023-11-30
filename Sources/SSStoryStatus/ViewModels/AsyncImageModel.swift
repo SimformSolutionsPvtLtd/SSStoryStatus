@@ -14,30 +14,30 @@ class AsyncImageModel: ObservableObject {
     // MARK: - Vars & Lets
     @ObservationIgnored private let cacheManager = ImageCacheManager.shared
     @ObservationIgnored private var cancellables: Set<AnyCancellable> = []
-    var imageUrl: URL?
     var imageState: ImageState = .loading
     
-    // MARK: - Private Methods
-    private func getImage() {
-        guard let imageUrl else {
+    // MARK: - Methods
+    func getImage(url: URL?) {
+        imageState = .loading
+        guard let url else {
             imageState = .error(.invalidUrl)
             return
         }
         
-        if let cacheImage = cacheManager.getImage(for: imageUrl) {
+        if let cacheImage = cacheManager.getImage(for: url) {
             imageState = .success(cacheImage)
         } else {
-            downloadAndCacheImage()
+            downloadAndCacheImage(url: url)
         }
     }
     
-    private func downloadAndCacheImage() {
-        guard let imageUrl else {
+    private func downloadAndCacheImage(url: URL?) {
+        guard let url else {
             imageState = .error(.invalidUrl)
             return
         }
         
-        URLSession.shared.dataTaskPublisher(for: imageUrl)
+        URLSession.shared.dataTaskPublisher(for: url)
             .receive(on: DispatchQueue.main)
             .tryMap(handleOutput)
             .tryMap(decodeImage)
@@ -47,7 +47,7 @@ class AsyncImageModel: ObservableObject {
                 guard let self, let image else { return }
                 
                 self.imageState = .success(image)
-                self.cacheManager.addImage(image: image, url: imageUrl)
+                self.cacheManager.addImage(image: image, url: url)
             }
             .store(in: &cancellables)
     }
@@ -66,17 +66,6 @@ class AsyncImageModel: ObservableObject {
             return nil
         }
         return image
-    }
-    
-    // MARK: - Initializers
-    init(imageUrl: URL?) {
-        self.imageUrl = imageUrl
-        getImage()
-    }
-    
-    init(imageUrl: String) {
-        self.imageUrl = URL(string: imageUrl)
-        getImage()
     }
 }
 
