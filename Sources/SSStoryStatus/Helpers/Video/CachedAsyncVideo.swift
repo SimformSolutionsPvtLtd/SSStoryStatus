@@ -12,7 +12,7 @@ struct CachedAsyncVideo<Content: View>: View {
     
     // MARK: - Vars & Lets
     @State var videoModel: VideoModel
-    @Binding var isPaused: Bool
+    var isPaused: Bool
     @ViewBuilder let content: (AsyncVideoPhase) -> Content
     var onProgressChange: ProgressType? = nil
     
@@ -49,10 +49,10 @@ struct CachedAsyncVideo<Content: View>: View {
     }
     
     // MARK: - Initializer
-    init(id: String, url: URL?, isPaused: Binding<Bool>, @ViewBuilder _ content: @escaping (_ phase: AsyncVideoPhase) -> Content) {
+    init(id: String, url: URL?, isPaused: Bool, @ViewBuilder _ content: @escaping (_ phase: AsyncVideoPhase) -> Content) {
         _videoModel = State(wrappedValue: VideoModel(id: id, url: url))
         self.content = content
-        self._isPaused = isPaused
+        self.isPaused = isPaused
     }
 }
 

@@ -7,15 +7,19 @@
 
 import SwiftUI
 
-struct ProfileListView: View {
+struct ProfileListView<Content: View>: View {
     
-    @Environment(StoryViewModel.self) private var storyViewModel: StoryViewModel
+    // MARK: - Vars & Lets
+    @Environment(StoryViewModel.self) private var storyViewModel
+    @Environment(\.profileStyle) private var profileStle
+    @ViewBuilder var content: (UserModel) -> Content
     
+    // MARK: - Body
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
-            LazyHStack(spacing: Sizes.profileViewSpace) {
+            LazyHStack(spacing: profileStle.hSpacing) {
                 ForEach(storyViewModel.userList) { user in
-                    UserView(user: user)
+                    content(user)
                         .onTapGesture {
                             storyViewModel.viewStory(of: user)
                         }
@@ -29,8 +33,11 @@ struct ProfileListView: View {
     }
 }
 
+// MARK: - Preview
 #Preview {
-    ProfileListView()
-        .previewLayout(.sizeThatFits)
-        .environment(StoryViewModel(userList: mockData))
+    ProfileListView { user in
+        UserView(user: user)
+    }
+    .previewLayout(.sizeThatFits)
+    .environment(StoryViewModel(userList: mockData))
 }

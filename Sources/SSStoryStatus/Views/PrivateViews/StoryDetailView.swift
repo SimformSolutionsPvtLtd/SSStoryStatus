@@ -12,8 +12,9 @@ struct StoryDetailView: View {
     // MARK: - Vars & Lets
     @Environment(StoryViewModel.self) private var storyViewModel
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.storySeenAction) private var onStorySeen
     @GestureState private var isPressing = false
-    @State var imageModel = AsyncImageModel()
+    @State var userViewModel = UserViewModel()
     var currentUser: UserModel
     
     // MARK: - Body
@@ -24,10 +25,10 @@ struct StoryDetailView: View {
                 Group {
                     StoryProgressView()
                     
-                    StoryHeaderView(user: currentUser, dismiss: dismiss)
+                    StoryHeaderView(user: currentUser, story: currentUser.stories[userViewModel.currentStoryIndex], dismiss: dismiss)
                 }
-                .opacity(storyViewModel.isProgressPaused ? 0 : 1)
-                .animation(.easeInOut(duration: 0.5), value: storyViewModel.isProgressPaused)
+                .opacity(userViewModel.isPaused ? 0 : 1)
+                .animation(.easeInOut(duration: 0.5), value: userViewModel.isPaused)
                 
                 ZStack {
                     Color.black
@@ -38,10 +39,36 @@ struct StoryDetailView: View {
                     handleTapGesture(location: location, geo: geo)
                 }
                 .gesture(longPressGesture)
-                .onChange(of: isPressing, { _, newValue in
+                .onChange(of: isPressing) { _, newValue in
                     handleLongPress(isPressed: newValue)
-                })
+                }
+                .onChange(of: userViewModel.currentStoryUserState) { _, newState in
+                    handleUserChange(for: newState)
+                }
+                .onChange(of: userViewModel.currentStoryIndex) { oldValue, _ in
+                    handleStorySeen(user: currentUser, storyIndex: oldValue)
+                }
+                .onChange(of: storyViewModel.currentUser) { oldValue, _ in
+                    if currentUser == oldValue {
+                        handleStorySeen(user: oldValue, storyIndex: userViewModel.currentStoryIndex)
+                    }
+                }
+                .onChange(of: storyViewModel.isStoryPresented) { _, isPresented in
+                    if !isPresented {
+                        handleStorySeen(user: currentUser, storyIndex: userViewModel.currentStoryIndex)
+                    }
+                }
+                .onAppear {
+                    userViewModel.updateUser(user: currentUser)
+                    userViewModel.updateProgressState(isPaused: false)
+                }
             }
+            .rotation3DEffect(
+                getAngle(geo: geo),
+                axis: (x: 0, y: 1, z: 0),
+                anchor: geo.frame(in: .global).minX > 0 ? .leading : .trailing,
+                perspective: 2.5)
+            .environment(userViewModel)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
@@ -49,7 +76,7 @@ struct StoryDetailView: View {
     // MARK: - Private Views
     @ViewBuilder
     private var storyMediaView: some View {
-        let story = storyViewModel.getStory()
+        let story = currentUser.stories[userViewModel.currentStoryIndex]
         
         switch story.mediaType {
         case .image:
@@ -61,7 +88,7 @@ struct StoryDetailView: View {
     
     @ViewBuilder
     private func getStoryImageView(story: StoryModel) -> some View {
-        CachedAsyncImage(imageModel: imageModel) { phase in
+        CachedAsyncImage(imageModel: userViewModel.imageModel) { phase in
             switch phase {
             case .success(let image):
                 image
@@ -70,27 +97,27 @@ struct StoryDetailView: View {
             case .failure(_):
                 Image(systemName: Images.error)
                     .onAppear {
-                        changeStory()
+                        userViewModel.changeStory()
                     }
             default:
                 ProgressView()
             }
         }
-        .onChange(of: storyViewModel.currentStoryIndex, initial: true) {
-            imageModel.getImage(url: URL(string: story.mediaURL))
+        .onChange(of: userViewModel.currentStoryIndex, initial: true) {
+            userViewModel.imageModel.getImage(url: URL(string: story.mediaURL))
         }
     }
     
     @ViewBuilder
     private func getStoryVideoView(story: StoryModel) -> some View {
-        @Bindable var storyViewModel = storyViewModel
         
-        CachedAsyncVideo(id: story.id, url: URL(string: story.mediaURL), isPaused: $storyViewModel.isProgressPaused) { phase in
+        CachedAsyncVideo(id: story.id, url: URL(string: story.mediaURL), isPaused: userViewModel.isPaused) { phase in
             switch phase {
             case .empty:
                 ProgressView()
             case .success(let player):
                 player
+                    .disabled(true)
             case .failure(_):
                 Image(systemName: Images.error)
             }
@@ -102,30 +129,47 @@ struct StoryDetailView: View {
 // MARK: - Private Methods
 extension StoryDetailView {
     
-    private func changeStory(direction: StoryDirection = .next) {
-        switch direction {
-        case .next:
-            storyViewModel.nextStory()
-        case .previous:
-            storyViewModel.previousStory()
-        }
-    }
-    
     private func handleTapGesture(location: CGPoint, geo: GeometryProxy) {
         if location.x < geo.size.width / 2 {
-            changeStory(direction: .previous)
+            userViewModel.changeStory(direction: .previous)
         } else {
-            changeStory()
+            userViewModel.changeStory()
         }
     }
     
     private func handleLongPress(isPressed: Bool) {
-        storyViewModel.isProgressPaused = isPressed
+        userViewModel.updateProgressState(isPaused: isPressed)
     }
     
     private func updateStoryProgress(progress: Double, totalDuration: Double) {
-        storyViewModel.updateCurrentProgress(progress: Float(progress), totalDuration: Float(totalDuration))
+        userViewModel.updateCurrentProgress(progress: Float(progress), totalDuration: Float(totalDuration))
     }
+    
+    private func handleUserChange(for state: UserViewModel.CurrentStoryUserState) {
+        switch state {
+        case .next:
+            storyViewModel.nextUser()
+        case .previous:
+            storyViewModel.previousUser()
+        case.current:
+            break
+        }
+    }
+    
+    private func getAngle(geo: GeometryProxy) -> Angle {
+        
+        // Converting offset to 45° rotation
+        let progress = geo.frame(in: .global).minX / geo.size.width
+        let rotationAngle: CGFloat = 45
+        let degree = progress * rotationAngle
+        return Angle(degrees: degree)
+    }
+    
+    private func handleStorySeen(user: UserModel, storyIndex: Int) {
+        storyViewModel.storySeen(user: user, storyIndex: storyIndex)
+        onStorySeen?(user, storyIndex)
+    }
+    
 }
 
 // MARK: - Gestures

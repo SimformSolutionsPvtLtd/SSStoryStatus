@@ -7,28 +7,28 @@
 
 import SwiftUI
 
-struct UserView: View {
+public struct UserView: View {
     
     // MARK: - Vars & Lets
-    @State var imageModel = AsyncImageModel()
+    @Environment(\.profileStyle) var profileStyle
+    @State private var imageModel = AsyncImageModel()
     var user: UserModel
     
     // MARK: - Body
-    var body: some View {
-        VStack(spacing: Sizes.profileVStackSpace) {
+    public var body: some View {
+        VStack(spacing: profileStyle.vSpacing) {
             ZStack {
-                Circle()
-                    .stroke(user.isAllStoriesSeen ? Colors.lightGray : Colors.lightGreen, lineWidth: Sizes.profileStrokeWidth)
+                CircularProgressView(radius: profileStyle.width / 2, totalStories: user.stories.count, seenStories: user.seenStoriesCount, colors: profileStyle.strokeColors)
                 
                 profileImageView
             }
-            .padding(Sizes.profileStrokeWidth)
-            .frame(width: Sizes.profileImageWidth, height: Sizes.profileImageHeight)
+            .frame(width: profileStyle.width, height: profileStyle.height)
             
             Text(user.name)
-                .foregroundColor(Color(.label))
-                .font(.system(size: Sizes.profileUsernameSize, design: .rounded))
-                .fontWeight(.medium)
+                .font(profileStyle.font)
+                .minimumScaleFactor(profileStyle.minimumScaleFactor)
+                .lineLimit(1)
+                .frame(width: profileStyle.width)
         }
     }
     
