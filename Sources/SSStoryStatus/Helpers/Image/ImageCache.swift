@@ -8,6 +8,36 @@
 import UIKit
 
 // MARK: - ImageCache Protocol
+/// A type used to manage caching of UIImage.
+///
+/// You can create custom implementation by confirming to `ImageCache` protocol. And providing implementations for required methods.
+///
+/// ```swift
+/// struct MyImageCache: ImageCache {
+///     let cache = MyCache() // Cache storage
+///
+///     func get(for url: URL, type: ImageType) -> UIImage? {
+///         cache.get(url)
+///     }
+///
+///     func set(_ image: UIImage, url: URL, type: ImageType) {
+///         cache.set(image, key: url)
+///     }
+///
+///     func remove(for url: URL, type: ImageType) {
+///         cache.remove(url)
+///     }
+///
+///     func clearAll() {
+///         cache.clearAll()
+///     }
+/// }
+/// ```
+///
+/// By default two implementations are are provided.
+///
+/// - ``NSImageCache`` - Uses `NSCache` for temporary caching.
+/// - ``StorageImageCache`` - Uses `file storage` for caching.
 public protocol ImageCache {
     
     associatedtype CacheType
@@ -24,6 +54,9 @@ public protocol ImageCache {
 }
 
 // MARK: - NSImageCache
+/// Implementing temporary caching by using `NSCache`.
+///
+/// Cache will be automatically deleted when the application is terminated.
 public class NSImageCache: ImageCache {
     
     // MARK: - Cache Instance
@@ -65,6 +98,29 @@ extension ImageCache where Self == NSImageCache {
 }
 
 // MARK: - StorageImageCache
+/// Implementing `File Storage` for image caching.
+///
+/// Cached data will be stored into file storage and will be awailable untill cleared.
+///
+/// Images are stored in `jpeg` format with `compressionQuality: 0.8`.
+///
+/// Cache can be cleared by pasing date object to `cacheExpire` parameter
+/// in ``SSStoryStatus/SSStoryStatus/init(users:sorted:cacheExpire:)``.
+///
+/// Default cache clearing time is 24 hours old.
+///
+/// ```swift
+/// struct ContentView: View {
+///
+///     let expireDate = Calendar.current.date(byAdding: .day, value: -1, to: .now) // 1 day ago
+///
+///     var body: some View {
+///         SSStoryStatus(users: users, cacheExpire)
+///     }
+/// }
+/// ```
+///
+/// > Note: Profile images can't be cleared by `cacheExpire`.
 public class StorageImageCache: ImageCache {
     
     // MARK: - Vars & Lets
