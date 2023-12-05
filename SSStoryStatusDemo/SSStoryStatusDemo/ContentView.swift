@@ -13,19 +13,32 @@ struct ContentView: View {
     // MARK: - Body
     var body: some View {
         VStack {
-            SSStoryStatus(users: SSStoryStatusDemo.mockData)
-                .profileListStyle(.default
-                    .profileSize(width: 80, height: 80)
-                    .font(.system(size: 18))
+            SSStoryStatus(users: mockData)
+                .changeImageCache(cache: .storage)
+                .profileListStyle(
+                    .automatic
+                        .horizontalSpacing(24)
+                )
+                .profileStyle(
+                    .automatic
+                        .profileSize(width: 80, height: 80)
+                        .strokeStyles(seen: .gray, unseen: .linearGradient(colors: [.green, .orange], startPoint: .top, endPoint: .bottom))
                 )
                 .storyStyle(
-                    .default
-                        .dismissImage(Image(systemName: "square.and.arrow.up"))
-                        .dismissColor(.red)
+                    progressBarStyle: .init(foreground: .linearGradient(colors: [.green, .orange], startPoint: .leading, endPoint: .trailing))
                 )
                 .onStorySeen { user, storyIndex in
                     print("Seen", user.name, user.stories[storyIndex].mediaURL)
                 }
+                .emoji(["🪄", "🧙🏼‍♂️", "🔮", "🧚", "🦉"]) { emoji, user, storyIndex  in
+                    print("Story", user.name, user.stories[storyIndex].mediaURL)
+                    print("Select - ", emoji)
+                }
+                .messageField { message, user, storyIndex in
+                    print("Story", user.name, user.stories[storyIndex].mediaURL)
+                    print("Send - ", message)
+                }
+                
             Spacer()
         }
     }

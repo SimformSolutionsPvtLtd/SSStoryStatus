@@ -1,6 +1,6 @@
 //
-//  Environment.swift
-//
+//  ActionEnvironment.swift
+//  SSStoryStatus
 //
 //  Created by Krunal Patel on 03/11/23.
 //
@@ -13,7 +13,7 @@ struct StorySeenActionKey: EnvironmentKey {
     static var defaultValue: StorySeenAction?
 }
 
-// MARK: - Action Keys EnvironmentValues Extension
+// MARK: - Story Seen EnvironmentValues Extension
 extension EnvironmentValues {
     
     var storySeenAction: StorySeenAction? {

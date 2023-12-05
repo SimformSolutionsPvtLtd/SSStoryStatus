@@ -1,6 +1,6 @@
 //
 //  AsyncVideoModel.swift
-//
+//  SSStoryStatus
 //
 //  Created by Krunal Patel on 01/11/23.
 //
@@ -13,41 +13,51 @@ import Combine
 class VideoModel {
     
     // MARK: - Vars & Lets
-    var videoState: VideoState = .loading {
-        didSet {
-            updatePlayer()
-        }
-    }
-    @ObservationIgnored var duration: Double = 0
+    var videoState: VideoState = .loading
+    var duration: Double = Double(Durations.storyDefaultDuration)
     var progress: Double = 0
-    @ObservationIgnored let videoCacheManager = VideoCacheManager.shared
-    @ObservationIgnored let id: String
-    @ObservationIgnored let url: URL?
-    @ObservationIgnored private let extention = ".mp4"
-    private var fileName: String {
-        id + extention
-    }
-    @ObservationIgnored var player: AVPlayer = AVPlayer()
+    let videoCacheManager = VideoCacheManager.shared
+    var url: URL?
+    var player: AVPlayer = AVPlayer()
     private var playerTimeObserver: Any? = nil
     
     // MARK: - Methods
-    func fetchVideo() async {
-        guard let url,
-              let avAsset = getAVAsset() else {
+    func fetchVideo(url: URL?, date: Date) async {
+        
+        guard let url else {
+          videoState = .error(.invalidURL)
+            return
+        }
+        
+        let newMedia = self.url != url
+        
+        if !newMedia {
+            updatePlayer(forced: false)
+            return
+        }
+        
+        self.url = url
+        Task {
+            await fetchDuration()
+        }
+        
+        guard let avAsset = getAVAsset() else {
             videoState = .error(.invalidURL)
             return
         }
         
-        if let cacheURL = videoCacheManager.getVideo(for: fileName) {
+        if let cacheURL = videoCacheManager.getVideo(for: url) {
             videoState = .success(cacheURL)
-            return
         } else {
             videoState = .success(url)
+            
+            
+            do {
+                _ = try await videoCacheManager.saveVideo(avAsset: avAsset, remoteUrl: url, date: date)
+            } catch { }
         }
         
-        do {
-            try await videoCacheManager.saveVideo(avAsset: avAsset, fileName: fileName)
-        } catch { }
+        updatePlayer()
     }
     
     func fetchDuration() async {
@@ -60,15 +70,17 @@ class VideoModel {
         duration = CMTimeGetSeconds(cmTime ?? .zero)
     }
     
-    func updatePlayer() {
-        removePlayerObserver()
+    func updatePlayer(forced: Bool = true) {
+        
         switch videoState {
         case .success(let url):
-            player.replaceCurrentItem(with: AVPlayerItem(url: url))
-            setupPlayerObserver()
+            if forced || player.currentTime() >= player.currentItem?.duration ?? .zero {
+                removePlayerObserver()
+                player.replaceCurrentItem(with: AVPlayerItem(url: url))
+                setupPlayerObserver()
+            }
         default:
-            duration = 0
-            player.replaceCurrentItem(with: nil)
+            resetPlayer()
         }
     }
     
@@ -83,6 +95,7 @@ class VideoModel {
         if let playerTimeObserver {
             player.removeTimeObserver(playerTimeObserver)
         }
+        playerTimeObserver = nil
     }
     
     func pausePlayback() {
@@ -93,33 +106,31 @@ class VideoModel {
         player.play()
     }
     
+    func resetPlayer() {
+        removePlayerObserver()
+        player.replaceCurrentItem(with: nil)
+        self.url = nil
+    }
+    
     private func getAVAsset() -> AVAsset? {
         guard let url else {
             return nil
         }
         return AVAsset(url: url)
     }
-    
-    // MARK: - Initializer
-    init(id: String, url: URL?) {
-        self.id = id
-        self.url = url
-    }
 }
 
-// MARK: - VideoState
+// MARK: - Enums
 extension VideoModel {
     
+    // MARK: - VideoState
     enum VideoState {
         case loading
         case success(URL)
         case error(VideoError)
     }
-}
-
-// MARK: - VideoError
-extension VideoModel {
     
+    // MARK: - VideoError
     enum VideoError: Error {
         case invalidURL
     }

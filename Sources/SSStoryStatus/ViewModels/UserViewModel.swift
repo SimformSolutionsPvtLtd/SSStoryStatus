@@ -1,6 +1,6 @@
 //
-//  swift
-//
+//  UserViewModel.swift
+//  SSStoryStatus
 //
 //  Created by Krunal Patel on 02/11/23.
 //
@@ -16,14 +16,16 @@ class UserViewModel {
     var user: UserModel?
     var currentStoryUserState: CurrentStoryUserState = .current
     var imageModel = AsyncImageModel()
+    var videoModel = VideoModel()
     var progressModels: [StoryProgressModel] = []
     var currentStoryIndex = 0
     private (set) var isPaused = false
-    private var timer: Publishers.Autoconnect<Timer.TimerPublisher>?
+    private var timer: Timer.TimerPublisher?
     private var cancallables: Set<AnyCancellable> = []
     
     // MARK: - Methods
     func changeStory(direction: StoryDirection = .next) {
+        videoModel.resetPlayer()
         switch direction {
         case .next:
             nextStory()
@@ -76,16 +78,24 @@ class UserViewModel {
         .store(in: &cancallables)
     }
     
+    func reset() {
+        stopTimer()
+        videoModel.resetPlayer()
+        progressModels[currentStoryIndex].resetProgress()
+    }
+    
     private func startTimer() {
-        timer = Timer.publish(every: Durations.progressUpdateInterval, on: .main, in: .common).autoconnect()
+        timer = Timer.publish(every: Durations.progressUpdateInterval, on: .main, in: .common)
+        timer?.connect().store(in: &cancallables)
         observeTimer()
     }
     
     private func stopTimer() {
-        timer?.upstream.connect().cancel()
+        cancallables.removeAll()
     }
     
     private func nextStory() {
+        
         guard let user, currentStoryIndex < user.stories.count - 1 else {
             currentStoryUserState = .next
             progressModels[currentStoryIndex].resetProgress()
@@ -119,43 +129,13 @@ class UserViewModel {
     }
 }
 
+// MARK: - Enums
 extension UserViewModel {
     
-    // MARK: - Current Story User Sate
+    // MARK: - CurrentStoryUserSate
     enum CurrentStoryUserState {
         case previous
         case current
         case next
-    }
-}
-
-@Observable
-class StoryProgressModel: Identifiable {
-    
-    @ObservationIgnored let id: String
-    var totalDuration: Float
-    var progress: Float = 0
-    
-    init(id: String, totalDuration: Float) {
-        self.id = id
-        self.totalDuration = totalDuration
-    }
-    
-    func increaseProgress(by duration: Float = Float(Durations.progressUpdateInterval)) {
-        withAnimation(.linear(duration: TimeInterval(duration))) {
-            progress = (progress + duration).clamped(to: 0...totalDuration)
-        }
-    }
-    
-    func completeProgress() {
-        progress = totalDuration
-    }
-    
-    func resetProgress() {
-        progress = 0
-    }
-    
-    func canProgress() -> Bool {
-        return Int(progress) < Int(totalDuration)
     }
 }

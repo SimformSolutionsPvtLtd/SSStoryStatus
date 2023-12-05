@@ -1,17 +1,17 @@
 //
-//  Image+Extention.swift
-//
+//  Image+Extension.swift
+//  SSStoryStatus
 //
 //  Created by Krunal Patel on 26/10/23.
 //
 
 import SwiftUI
 
-// MARK: - Image Modifiers
+// MARK: - Image Extension
 extension Image {
     
     // MARK: - Placeholder Modifier
-    func placeholerModifier() -> some View {
+    func placeholderModifier() -> some View {
         self
             .resizable()
             .scaledToFit()

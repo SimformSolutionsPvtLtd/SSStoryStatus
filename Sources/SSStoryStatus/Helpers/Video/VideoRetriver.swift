@@ -1,6 +1,6 @@
 //
 //  VideoRetriver.swift
-//
+//  SSStoryStatus
 //
 //  Created by Krunal Patel on 01/11/23.
 //
@@ -66,9 +66,10 @@ class VideoRetriver {
     private init() { }
 }
 
-// MARK: - Retriver Errors
+// MARK: - Enums
 extension VideoRetriver {
     
+    // MARK: - RetriverErrors
     enum RetriverError: Error {
         case invalidURL
         case notExportable
