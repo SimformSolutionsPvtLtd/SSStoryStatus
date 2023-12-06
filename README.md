@@ -1,4 +1,4 @@
-<!-- Banner -->
+![SSStoryStatus][Banner]
 
 # SSStoryStatus
 
@@ -166,6 +166,8 @@ Check out our other libraries [Awesome-Mobile-Libraries].
 Distributed under the MIT license. See [LICENSE] for details.
 
 <!-- Reference links -->
+
+[Banner]:                   https://github.com/SimformSolutionsPvtLtd/SSStoryStatus/assets/147126103/c5cb3bc9-3a63-4260-a8ff-6345ef1559c0
 
 [SSStoryStatus]:            https://github.com/SimformSolutionsPvtLtd/SSStoryStatus
 
