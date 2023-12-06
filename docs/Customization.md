@@ -2,6 +2,8 @@
 
 ## Profile Listing
 
+![Profile Listing](https://github.com/SimformSolutionsPvtLtd/SSStoryStatus/assets/147126103/f9c61c56-5e2c-4871-8a38-d83d9b3be077)
+
 To customize the profile listing you can use `profileListStyle` view modifier.
 
 For customizing profile view refer [Profile View](#profile-view).
@@ -17,6 +19,8 @@ Alternatively, you can provide custom type that confirms to `ProfileListStyle` p
 Please refer `ProfileListStyle` documantation for more detail.
 
 ## Profile View
+
+![Profile View](https://github.com/SimformSolutionsPvtLtd/SSStoryStatus/assets/147126103/3632406f-f22d-4112-b4ee-4d790be98d2c)
 
 Profile views displayed in profile listed can be customized with the `profileStyle` view modifier.
 
@@ -36,6 +40,8 @@ You `storyStyle` view modifier to configure different components of story view.
 
 ### Story Header
 
+![Story Header](https://github.com/SimformSolutionsPvtLtd/SSStoryStatus/assets/147126103/ba50c961-8e6a-4ba4-ad02-d66ae69f3ee3)
+
 To customize story header you can pass type confirming to `StoryHeaderStyle` protocol.
 
 You can use built-in type with `StoryHeaderStyle.automatic` with available customization methods.
@@ -49,6 +55,8 @@ SSStoryStatus(users: mockData)
 For detailed guide please refer `StoryHeaderStyle` documantation.
 
 ### Story Footer
+
+[Story Footer](https://github.com/SimformSolutionsPvtLtd/SSStoryStatus/assets/147126103/0936b7f5-c354-4b21-bc8b-95cf3b647db0)
 
 To customize story footer you can pass type confirming to `StoryFooterStyle` protocol.
 
@@ -64,6 +72,8 @@ For detailed guide please refer `StoryFooterStyle` documantation.
 
 ### Story Progress Bar
 
+![Progress Bar](https://github.com/SimformSolutionsPvtLtd/SSStoryStatus/assets/147126103/ea8ca824-5bb5-4885-8dfc-23f994382fa6)
+
 To customize progress bar of story you have to pass instance of `ProgressBarStyle`.
 
 You can create new instance with custom values.
@@ -78,11 +88,13 @@ For detailed guide please refer `ProgressBarStyle` documantation.
 
 ## Emoji
 
+![Emoji](https://github.com/SimformSolutionsPvtLtd/SSStoryStatus/assets/147126103/33a31456-c9bc-44c0-9cb3-5d1c2fdd0bc2)
+
 You can use custom emoji reactions by providing list of emojis  in `emoji` modifiers.
 
 ```swift
 SSStoryStatus(users: mockData)
-    .emoji(["😂", "🔥", "😭", "😍", "😡"]) { emoji, _, _ in
+    .emoji(["🪄", "🧙🏼‍♂️", "🔮", "🧚", "🦉"]) { emoji, _, _ in
         print("Selected - ", emoji)
     }
 ```
@@ -107,6 +119,8 @@ SSStoryStatus(users: mockData)
 For detailed guide please refer `EmojiStyle` documantation.
 
 ## Messsage Field
+
+![Message Field](https://github.com/SimformSolutionsPvtLtd/SSStoryStatus/assets/147126103/0d0597c4-9d47-4e33-9f80-62453cb9d820)
 
 You can provide custom placeholder of type `Text` by passing to `messageField` view moodifier.
 
