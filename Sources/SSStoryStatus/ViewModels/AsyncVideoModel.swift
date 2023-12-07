@@ -10,7 +10,7 @@ import AVKit
 import Combine
 
 @Observable
-class VideoModel {
+class AsyncVideoModel {
     
     // MARK: - Vars & Lets
     var videoState: VideoState = .loading
@@ -126,7 +126,7 @@ class VideoModel {
 }
 
 // MARK: - Enums
-extension VideoModel {
+extension AsyncVideoModel {
     
     // MARK: - VideoState
     enum VideoState {

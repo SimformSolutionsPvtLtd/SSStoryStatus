@@ -14,7 +14,7 @@ struct StoryDetailView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.storySeenAction) private var onStorySeen
     @GestureState private var isPressing = false
-    @State private var userViewModel = UserViewModel()
+    @State private var userViewModel: UserViewModel
     var currentUser: UserModel
     
     var currentStory: StoryModel {
@@ -53,7 +53,9 @@ struct StoryDetailView: View {
                 handleUserChange(for: newState)
             }
             .onChange(of: userViewModel.currentStoryIndex) { oldValue, _ in
-                handleStorySeen(user: currentUser, storyIndex: oldValue)
+                if let oldValue {
+                    handleStorySeen(user: currentUser, storyIndex: oldValue)
+                }
             }
             .onChange(of: storyViewModel.currentUser) { oldValue, _ in
                 if let oldValue, currentUser == oldValue {
@@ -66,7 +68,7 @@ struct StoryDetailView: View {
                 }
             }
             .onAppear {
-                userViewModel.updateUser(user: currentUser)
+                userViewModel.currentStoryUserState = .current
                 userViewModel.updateProgressState(isPaused: false)
             }
             .onDisappear {
@@ -80,6 +82,11 @@ struct StoryDetailView: View {
         }
         .environment(userViewModel)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+    
+    init(currentUser: UserModel) {
+        self.currentUser = currentUser
+        _userViewModel = State(initialValue: UserViewModel(user: currentUser))
     }
 }
 
@@ -212,9 +219,3 @@ extension StoryDetailView {
 
 // MARK: - Typealias
 public typealias StorySeenAction = (_ user: UserModel, _ storyIndex: Int) -> Void
-
-// MARK: - Preview
-#Preview {
-    StoryDetailView(currentUser: mockData[0])
-}
-

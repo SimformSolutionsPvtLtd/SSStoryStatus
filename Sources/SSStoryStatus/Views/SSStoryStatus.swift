@@ -76,8 +76,3 @@ extension SSStoryStatus {
         VideoCacheManager.shared.clearCache(olderThan: date)
     }
 }
-
-// MARK: - Preview
-#Preview {
-    SSStoryStatus(users: mockData)
-}

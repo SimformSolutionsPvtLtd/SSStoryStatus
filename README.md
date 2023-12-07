@@ -102,7 +102,6 @@ let stories: [StoryModel] = [
         mediaURL: "",           // Media url of image or video
         date: .now,             // Story creation date
         caption: "",            // Caption for the story (optional)
-        duration: 15,           // Duration for how long story will be visible
         mediaType: .image,      // Media type: image or video
         storyState: .seen       // Story is seen or unseen
     )

@@ -13,7 +13,7 @@ struct ContentView: View {
     // MARK: - Body
     var body: some View {
         VStack {
-            SSStoryStatus(users: mockData)
+            SSStoryStatus(users: MockData().data)
                 .changeImageCache(cache: .storage)
                 .profileListStyle(
                     .automatic
@@ -42,9 +42,4 @@ struct ContentView: View {
             Spacer()
         }
     }
-}
-
-// MARK: - Preview
-#Preview {
-    ContentView()
 }

@@ -112,3 +112,17 @@ extension EnvironmentValues {
     }
 }
 
+// MARK: - StoryStyle Key
+struct StoryStyleEnvironment: EnvironmentKey {
+    
+    static var defaultValue: StoryStyle = StoryStyle()
+}
+
+// MARK: - StoryStyle Keys EnvironmentValues Extension
+extension EnvironmentValues {
+    
+    var storyStyle: StoryStyle {
+        get { self[StoryStyleEnvironment.self] }
+        set { self[StoryStyleEnvironment.self] = newValue }
+    }
+}

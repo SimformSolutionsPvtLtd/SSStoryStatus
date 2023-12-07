@@ -11,7 +11,7 @@ import AVKit
 struct CachedAsyncVideo<Content: View>: View {
     
     // MARK: - Vars & Lets
-    let videoModel: VideoModel
+    let videoModel: AsyncVideoModel
     var isPaused: Bool
     @ViewBuilder let content: (AsyncVideoPhase) -> Content
     var onProgressChange: ProgressType? = nil
@@ -43,7 +43,7 @@ struct CachedAsyncVideo<Content: View>: View {
     }
     
     // MARK: - Initializer
-    init(videoModel: VideoModel, isPaused: Bool, @ViewBuilder _ content: @escaping (_ phase: AsyncVideoPhase) -> Content) {
+    init(videoModel: AsyncVideoModel, isPaused: Bool, @ViewBuilder _ content: @escaping (_ phase: AsyncVideoPhase) -> Content) {
         self.videoModel = videoModel
         self.content = content
         self.isPaused = isPaused

@@ -25,8 +25,3 @@ struct StoryFooterView: View {
         storyFooterStyle.makeBody(configuration: configuration, focused: $focused)
     }
 }
-
-// MARK: - Preview
-#Preview {
-    StoryFooterView(user: mockData[0], storyIndex: 0)
-}

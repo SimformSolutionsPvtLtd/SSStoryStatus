@@ -71,12 +71,12 @@ extension View {
     }
     
     /// Sets the style for profile view in profile listing.
-    /// 
+    ///
     /// Use this modifier on ``SSStoryStatus`` instance to set a style that defines
     /// how the profile should be look like.
-    /// 
+    ///
     /// ### Styling profile view in hierarchy
-    /// 
+    ///
     /// You can set a style for all ``SSStoryStatus`` instances within a
     /// view hierarchy by applying modifier to parent view. For example, you can
     /// apply the ``ProfileStyle/automatic`` with width and height of 80
@@ -89,12 +89,12 @@ extension View {
     /// }
     /// .profileStyle(.automatic.profileSize(width: 80, height: 80))
     /// ```
-    /// 
+    ///
     /// ### Automatic styling
-    /// 
+    ///
     /// By default it uses ``ProfileStyle/automatic`` with default style values.
     /// You can customize properties with methods available in ``DefaultProfileStyle``.
-    /// 
+    ///
     /// - Parameter style: The profile style to set. Use built-in value like
     /// ``ProfileStyle/automatic`` or custom style that conforms to
     /// ``ProfileStyle`` protocol.
@@ -109,50 +109,57 @@ extension View {
 extension View {
     
     /// Sets the style for story view appearance.
-    /// 
+    ///
     /// Use this modifier on ``SSStoryStatus`` instance to set a style that defines
     /// how the story should be look like. You can provide style for different component of story
     /// like header, footer and progress bar style.
-    /// 
+    ///
     /// ### Styling story view in hierarchy
-    /// 
+    ///
     /// You can set a style for all ``SSStoryStatus`` instances within a view
     /// hierarchy by applying modifier to parent view. For example, you can apply the
     /// ``StoryHeaderStyle/automatic`` with ``DefaultStoryHeaderStyle/dismissImage(_:)``
     /// to change the close button image and provide gradient color to progress bar.
-    /// 
+    ///
     /// ```swift
     /// VStack {
     ///     SSStoryStatus(users: firstUserList)
     ///     SSStoryStatus(users: secondUserList)
     /// }
     /// .storyStyle(
+    ///     StoryStyle(storyDuration: 15),
     ///     headerStyle: .automatic
     ///         .dismissImage(Image(systemName: "xmark")),
     ///     progressBarStyle: .init(foreground: .linearGradient(colors: [.green, .orange], startPoint: .leading, endPoint: .trailing))
     /// )
     /// ```
-    /// 
+    ///
     /// ### Automatic styling
-    /// 
+    ///
+    /// - Story uses ``StoryStyle`` instance for configuration. You can customize it with available
+    /// methods in `StoryStyle` or create new instance with ``StoryStyle/init(storyDuration:)``
+    ///  with required values.
+    ///
     /// - By default the header is styled using ``StoryHeaderStyle/automatic`` with the default
     /// values. You can customize the appearance using methods available in ``DefaultStoryHeaderStyle``.
-    /// 
+    ///
     /// - By default the footer is styled using ``StoryFooterStyle/automatic`` with the default
     /// values. You can customize the appearance using methods available in ``DefaultStoryFooterStyle``.
-    /// 
+    ///
     /// - Progress bar use ``ProgressBarStyle`` instance for styling. You can customize it with available
     /// methods in `ProgressBarStyle` or create new instance with ``ProgressBarStyle/init(foreground:background:height:)``
     ///  with required values.
-    /// 
+    ///
     /// - Parameters:
+    ///   - storyStyle: A story style for configuration of story like image story duration.
     ///   - headerStyle: A header style to use for styling header in the story view.
     ///   - footerStyle: A footer style to use for styling footer in the story view.
     ///   - progressBarStyle: A progress bar style to use for styling progress bar in the story view.
     /// - Returns: A view that uses the specified profile list style for itself
     ///   and its child views.
-    public func storyStyle<S1: StoryHeaderStyle, S2: StoryFooterStyle>(headerStyle: S1 = .automatic, footerStyle: S2 = .automatic, progressBarStyle: ProgressBarStyle = .init()) -> some View {
-        environment(\.storyHeaderStyle, AnyStoryHeaderStyle(headerStyle))
+    public func storyStyle<S1: StoryHeaderStyle, S2: StoryFooterStyle>(_ storyStyle: StoryStyle = .init(), headerStyle: S1 = .automatic, footerStyle: S2 = .automatic, progressBarStyle: ProgressBarStyle = .init()) -> some View {
+        environment(\.storyStyle, storyStyle)
+            .environment(\.storyHeaderStyle, AnyStoryHeaderStyle(headerStyle))
             .environment(\.storyFooterStyle, AnyStoryFooterStyle(footerStyle))
             .environment(\.progressBarStyle, progressBarStyle)
     }
@@ -196,13 +203,13 @@ extension View {
     ///
     /// Use this modifier on ``SSStoryStatus`` instance to set a style that defines
     /// how the emojis view should be look like.
-    /// 
+    ///
     /// ### Styling emoji view in hierarchy
-    /// 
+    ///
     /// You can set a style for all ``SSStoryStatus`` instances within a
     /// view hierarchy by applying modifier to parent view. For example, you can
     /// apply the ``EmojiStyle/automatic`` with emoji size of 20 to an `VStack`:
-    /// 
+    ///
     /// ```swift
     /// VStack {
     ///     SSStoryStatus(users: firstUserList)
@@ -210,12 +217,12 @@ extension View {
     /// }
     /// .emojiStyle(.automatic.emojiSize(20))
     /// ```
-    /// 
+    ///
     /// ### Automatic styling
-    /// 
+    ///
     /// By default it uses ``EmojiStyle/automatic`` with default style values.
     /// You can customize properties with methods available in ``DefaultEmojiStyle``.
-    /// 
+    ///
     /// - Parameter style: The emoji style to set. Use built-in value like
     /// ``EmojiStyle/automatic`` or custom style that conforms to
     /// ``EmojiStyle`` protocol.
@@ -226,7 +233,6 @@ extension View {
     }
     
     // MARK: - Message Style
-
     /// Sets the message field with placeholder and style.
     ///
     /// Use this modifier on ``SSStoryStatus`` instance to set configuration and style for

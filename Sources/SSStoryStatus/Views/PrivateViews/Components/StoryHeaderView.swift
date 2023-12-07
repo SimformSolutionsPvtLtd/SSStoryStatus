@@ -29,9 +29,3 @@ public struct StoryHeaderView: View {
         )
     }
 }
-
-// MARK: - Preview
-#Preview {
-    ProfileView(user: mockData[0])
-        .previewLayout(.sizeThatFits)
-}
