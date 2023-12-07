@@ -22,7 +22,8 @@ let package = Package(
         .target(
             name: "SSStoryStatus",
             dependencies: [],
-            resources: [.process("Resources/Assets.xcassets")]),
+            resources: [.process("Resources/")],
+            swiftSettings: [.define("SPM")]),
         .testTarget(
             name: "SSStoryStatusTests",
             dependencies: ["SSStoryStatus"]),

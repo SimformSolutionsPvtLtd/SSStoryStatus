@@ -181,6 +181,7 @@ extension DefaultStoryFooterStyle {
         Text(caption)
             .font(captionFont)
             .foregroundStyle(captionColor)
+            .shadow(color: .black, radius: 10)
     }
 }
 

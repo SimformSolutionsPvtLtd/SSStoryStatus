@@ -20,10 +20,10 @@ class VideoModel {
     var url: URL?
     var player: AVPlayer = AVPlayer()
     private var playerTimeObserver: Any? = nil
+    private var queue = DispatchQueue(label: "playerQueue", qos: .default, target: .main)
     
     // MARK: - Methods
     func fetchVideo(url: URL?, date: Date) async {
-        
         guard let url else {
           videoState = .error(.invalidURL)
             return
@@ -51,7 +51,6 @@ class VideoModel {
         } else {
             videoState = .success(url)
             
-            
             do {
                 _ = try await videoCacheManager.saveVideo(avAsset: avAsset, remoteUrl: url, date: date)
             } catch { }
@@ -71,12 +70,11 @@ class VideoModel {
     }
     
     func updatePlayer(forced: Bool = true) {
-        
         switch videoState {
         case .success(let url):
             if forced || player.currentTime() >= player.currentItem?.duration ?? .zero {
                 removePlayerObserver()
-                player.replaceCurrentItem(with: AVPlayerItem(url: url))
+                updatePlayer(with: AVPlayerItem(url: url))
                 setupPlayerObserver()
             }
         default:
@@ -108,8 +106,15 @@ class VideoModel {
     
     func resetPlayer() {
         removePlayerObserver()
-        player.replaceCurrentItem(with: nil)
+        updatePlayer(with: nil)
         self.url = nil
+    }
+    
+    // Player item must be updated on main thread
+    private func updatePlayer(with item: AVPlayerItem?) {
+        queue.async { [weak player] in
+            player?.replaceCurrentItem(with: item)
+        }
     }
     
     private func getAVAsset() -> AVAsset? {
