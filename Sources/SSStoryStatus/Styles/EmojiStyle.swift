@@ -12,7 +12,7 @@ import SwiftUI
 ///
 /// When you define a custom emoji style that confirms to the ``EmojiStyle``
 /// protocol, you use this configuration to create view using
-/// ``EmojiStyle/makeBody(configuration:)`` method.
+/// ``EmojiStyle/makeBody(configuration:user:storyIndex:)`` method.
 /// Method takes `EmojiStyleConfiguration` as input that contains all the
 /// required informations to create emoji view.
 public struct EmojiStyleConfiguration {
@@ -44,7 +44,7 @@ public struct EmojiStyleConfiguration {
 /// ```
 ///
 /// To create custom style, declare a type that confirms to `EmojiStyle` and
-/// implement the required ``makeBody(configuration:)`` method.
+/// implement the required ``makeBody(configuration:user:storyIndex:)`` method.
 ///
 /// ```swift
 /// struct HorizontalProfileListStyle: EmojiStyle {
@@ -78,7 +78,7 @@ public protocol EmojiStyle {
     /// A view that represents the appearance of a emojis view.
     ///
     /// SwiftUI inters this type automatically based on the `View` instance returned
-    /// form ``makeBody(configuration:)`` method.
+    /// form ``makeBody(configuration:user:storyIndex:)`` method.
     associatedtype Body : View
     
     /// Creates a view that represents the body of emoji view.
@@ -113,7 +113,7 @@ public protocol EmojiStyle {
     ///
     /// You receive a `configuration` parameter of this type -- which is an alias for the
     /// ``EmojiStyleConfiguration`` type -- when implementing
-    /// ``makeBody(configuration:)`` method for custom style.
+    /// ``makeBody(configuration:user:storyIndex:)`` method for custom style.
     typealias Configuration = EmojiStyleConfiguration
 }
 

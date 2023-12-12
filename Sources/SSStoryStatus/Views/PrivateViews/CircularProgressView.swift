@@ -72,8 +72,3 @@ extension CircularProgressView {
         CGFloat(seenStories) / CGFloat(totalStories)
     }
 }
-
-// MARK: - Preview
-#Preview {
-    CircularProgressView(radius: Sizes.profileImageWidth / 2, totalStories: mockData[0].stories.count, seenStories: mockData[0].seenStoriesCount)
-}

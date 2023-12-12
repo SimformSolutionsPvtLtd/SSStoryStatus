@@ -13,8 +13,8 @@ extension Bundle {
       Bundle(for: BundleFinder.self)
   }
 }
-#endif
 
 private class BundleFinder {
     private init() { }
 }
+#endif

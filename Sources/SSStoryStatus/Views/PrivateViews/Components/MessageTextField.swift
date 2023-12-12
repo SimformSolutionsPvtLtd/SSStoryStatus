@@ -47,8 +47,3 @@ extension MessageTextField {
 ///   - user: The user containing story.
 ///   - storyIndex: The index of story.
 public typealias MessageSendAction = (_ message: String, _ user: UserModel, _ storyIndex: Int) -> Void
-
-// MARK: - Preview
-#Preview {
-    MessageTextField(user: mockData[0], storyIndex: 0)
-}

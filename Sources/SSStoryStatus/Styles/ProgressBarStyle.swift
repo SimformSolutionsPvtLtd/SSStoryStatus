@@ -10,7 +10,7 @@ import SwiftUI
 /// A style that is applied on progress bar of story view.
 ///
 /// Set the style by passing instance of `ProgressBarStyle` to
-/// ``SwiftUI/View/storyStyle(headerStyle:footerStyle:progressBarStyle:)``.
+/// ``SwiftUI/View/storyStyle(_:headerStyle:footerStyle:progressBarStyle:)``.
 ///
 /// You can customize the default values with the use of available method or
 /// create new instance with custom value using ``init(foreground:background:height:)``.
@@ -33,6 +33,12 @@ public struct ProgressBarStyle {
     
     /// The height of progress bar.
     public var height: CGFloat
+    
+    /// The preferred spacing between progress bars in percentage.
+    public var preferredSpacingPercentage: CGFloat = Sizes.progressBarSpacingPercentage
+    
+    /// The bound for min and max spacing between progress bars.
+    public var spacingBound: ClosedRange<CGFloat> = Sizes.progressBarSpacingBound
     
     // MARK: - Initializer
     /// Use this initializer to create instance of `ProgressBarStyle` with custom values.
@@ -76,10 +82,28 @@ extension ProgressBarStyle {
     
     /// Sets the height of progress bar.
     /// - Parameter height: The new height for progress bar.
-    /// - Returns: A new style with given height of progress bar..
+    /// - Returns: A new style with given height of progress bar.
     public func height(_ height: CGFloat) -> Self {
         var copy = self
         copy.height = height
+        return copy
+    }
+    
+    /// Sets the preferred spacing percentage between progress bars.
+    /// - Parameter percentage: The new percentage for spacing.
+    /// - Returns: A new style with given spacing.
+    public func preferredSpacePercentage(_ percentage: CGFloat) -> Self {
+        var copy = self
+        copy.preferredSpacingPercentage = percentage
+        return copy
+    }
+    
+    /// Sets the bound of spacing percentage between progress bars.
+    /// - Parameter range: The new range for progress bar spacing.
+    /// - Returns: A new style with given spacing bound.
+    public func spacingBound(in range: ClosedRange<CGFloat>) -> Self {
+        var copy = self
+        copy.spacingBound = range
         return copy
     }
 }

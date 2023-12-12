@@ -73,9 +73,6 @@ public class StoryModel: Identifiable, Hashable {
     /// The caption for the story.
     public let caption: String
     
-    /// The duration for the story in seconds.
-    public let duration: Float
-    
     /// The type of media.
     public let mediaType: MediaType
     
@@ -91,12 +88,11 @@ public class StoryModel: Identifiable, Hashable {
     }
     
     // MARK: - Initializer
-    public init(id: String = UUID().uuidString, mediaURL: String, date: Date, caption: String = "", duration: Float = Durations.storyDefaultDuration, mediaType: MediaType, storyState: StoryState = .unseen) {
+    public init(id: String = UUID().uuidString, mediaURL: String, date: Date, caption: String = "", mediaType: MediaType, storyState: StoryState = .unseen) {
         self.id = id
         self.mediaURL = mediaURL
         self.date = date
         self.caption = caption
-        self.duration = duration
         self.mediaType = mediaType
         self.storyState = storyState
     }

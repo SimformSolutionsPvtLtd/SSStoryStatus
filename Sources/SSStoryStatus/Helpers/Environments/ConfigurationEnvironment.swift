@@ -7,13 +7,13 @@
 
 import SwiftUI
 
-// MARK: - StoryStyle Key
+// MARK: - EmojiStyle Key
 struct EmojiStyleConfigurationEnvironment: EnvironmentKey {
 
     static var defaultValue = EmojiStyle.Configuration()
 }
 
-// MARK: - StoryStyle Keys EnvironmentValues Extension
+// MARK: - EmojiStyle Keys EnvironmentValues Extension
 extension EnvironmentValues {
     
     var emojiStyleConfiguration: EmojiStyle.Configuration {
@@ -22,13 +22,13 @@ extension EnvironmentValues {
     }
 }
 
-// MARK: - StoryStyle Key
+// MARK: - MessageStyle Key
 struct MessageStyleConfigurationEnvironment: EnvironmentKey {
     
     static var defaultValue = MessageStyle.Configuration()
 }
 
-// MARK: - StoryStyle Keys EnvironmentValues Extension
+// MARK: - MessageStyle Keys EnvironmentValues Extension
 extension EnvironmentValues {
     
     var messageStyleConfiguration: MessageStyle.Configuration {

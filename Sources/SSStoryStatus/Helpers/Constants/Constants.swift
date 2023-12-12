@@ -25,7 +25,8 @@ public enum Sizes {
     
     // MARK: Story
     public static let progressBarHeight: CGFloat = 3
-    static let progressBarSpacing: CGFloat = 6
+    static let progressBarSpacingPercentage: CGFloat = 10
+    static let progressBarSpacingBound: ClosedRange<CGFloat> = 1...6
     static let storyUserHStackSpace: CGFloat = 13
     static let closeButtonSize: CGFloat = 44
     static let closeButtonPadding: CGFloat = 14
@@ -86,7 +87,7 @@ public enum Fonts {
 
 // MARK: - Angles
 enum Angles {
-    static let dashPhase: CGFloat = 60
+    static let dashPhase: CGFloat = -3
     static let trimAngle: Angle = .degrees(-90)
 }
 

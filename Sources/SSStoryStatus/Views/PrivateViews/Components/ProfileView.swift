@@ -23,9 +23,3 @@ public struct ProfileView: View {
         configuration = ProfileStyle.Configuration(user: user)
     }
 }
-
-// MARK: - Preview
-#Preview {
-    ProfileView(user: mockData[0])
-        .previewLayout(.sizeThatFits)
-}

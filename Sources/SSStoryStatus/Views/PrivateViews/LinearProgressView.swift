@@ -25,7 +25,6 @@ struct LinearProgressView: View {
                         .frame(width: getPerfectProgress() * proxy.size.width)
                 }
         }
-        .frame(height: style.height)
     }
 }
 
@@ -35,9 +34,4 @@ extension LinearProgressView {
     private func getPerfectProgress() -> CGFloat {
         CGFloat(progress / total).clamped(to: 0...1)
     }
-}
-
-// MARK: - Preview
-#Preview {
-    LinearProgressView()
 }

@@ -28,9 +28,3 @@ struct StoryView: View {
         .preferredColorScheme(.dark)
     }
 }
-
-// MARK: - Preview
-#Preview {
-    StoryView()
-        .environment(StoryViewModel(userList: mockData))
-}

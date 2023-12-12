@@ -39,7 +39,7 @@ import Combine
 /// ```
 ///
 /// > Important: You can't apply image-specific modifiers, like
-/// ``Image/resizable(capInsets:resizingMode:)``, directly to an `CachedAsyncImage`.
+/// `Image/resizable(capInsets:resizingMode:)`, directly to an `CachedAsyncImage`.
 /// Instead, apply them to the `Image` instance that your `content`
 /// closure gets when defining the view's appearance.
 public struct CachedAsyncImage<Content: View>: View {

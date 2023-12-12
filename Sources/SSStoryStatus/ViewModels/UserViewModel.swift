@@ -13,15 +13,16 @@ import Combine
 class UserViewModel {
     
     // MARK: - Vars & Lets
-    var user: UserModel?
+    var user: UserModel
+    var currentStoryIndex: Int!
     var currentStoryUserState: CurrentStoryUserState = .current
     var imageModel = AsyncImageModel()
-    var videoModel = VideoModel()
+    var videoModel = AsyncVideoModel()
     var progressModels: [StoryProgressModel] = []
-    var currentStoryIndex = 0
-    private (set) var isPaused = false
+    var storyDuration: Float = Durations.storyDefaultDuration
+    private (set) var isPaused = true
     private var timer: Timer.TimerPublisher?
-    private var cancallables: Set<AnyCancellable> = []
+    private var cancellables: Set<AnyCancellable> = []
     
     // MARK: - Methods
     func changeStory(direction: StoryDirection = .next) {
@@ -35,20 +36,16 @@ class UserViewModel {
     }
     
     func updateUser(user: UserModel) {
-        if self.user == nil {
-            progressModels = user.stories.map { story in
-                StoryProgressModel(id: story.id, totalDuration: story.duration)
-            }
-        } else {
-            progressModels[currentStoryIndex].resetProgress()
+        progressModels = user.stories.map { story in
+            StoryProgressModel(id: story.id, totalDuration: storyDuration)
         }
-        self.user = user
+        updateCurrentStoryIndex(for: user)
         currentStoryUserState = .current
     }
     
     func updateProgressState(isPaused: Bool) {
         self.isPaused = isPaused
-        guard let user = user, user.stories[currentStoryIndex].mediaType != .video else {
+        guard user.stories[currentStoryIndex].mediaType != .video else {
             stopTimer()
             return
         }
@@ -75,7 +72,7 @@ class UserViewModel {
         timer?.sink { [weak self] _ in
             self?.increaseProgress()
         }
-        .store(in: &cancallables)
+        .store(in: &cancellables)
     }
     
     func reset() {
@@ -86,17 +83,25 @@ class UserViewModel {
     
     private func startTimer() {
         timer = Timer.publish(every: Durations.progressUpdateInterval, on: .main, in: .common)
-        timer?.connect().store(in: &cancallables)
+        timer?.connect().store(in: &cancellables)
         observeTimer()
     }
     
+    private func updateCurrentStoryIndex(for user: UserModel) {
+        if user.isAllStoriesSeen {
+            currentStoryIndex = 0
+        } else {
+            currentStoryIndex = user.seenStoriesCount
+            progressModels[0..<currentStoryIndex].forEach { $0.completeProgress() }
+        }
+    }
+    
     private func stopTimer() {
-        cancallables.removeAll()
+        cancellables.removeAll()
     }
     
     private func nextStory() {
-        
-        guard let user, currentStoryIndex < user.stories.count - 1 else {
+        guard currentStoryIndex < user.stories.count - 1 else {
             currentStoryUserState = .next
             progressModels[currentStoryIndex].resetProgress()
             return
@@ -126,6 +131,12 @@ class UserViewModel {
         } else {
             changeStory()
         }
+    }
+    
+    // MARK: - Initializer
+    init(user: UserModel) {
+        self.user = user
+        updateUser(user: user)
     }
 }
 

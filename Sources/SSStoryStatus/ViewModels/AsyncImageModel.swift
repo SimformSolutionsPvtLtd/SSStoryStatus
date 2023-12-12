@@ -9,15 +9,15 @@ import UIKit
 import Combine
 
 @Observable
-public class AsyncImageModel: ObservableObject {
+public class AsyncImageModel {
     
     // MARK: - Vars & Lets
     var imageState: ImageState = .loading
+    var size: CGSize? = nil
+    var shouldResizeProfile = true
+    var url: URL?
     @ObservationIgnored private let cacheManager = ImageCacheManager.shared
     @ObservationIgnored private var cancellables: Set<AnyCancellable> = []
-    @ObservationIgnored var size: CGSize? = nil
-    @ObservationIgnored var shouldResizeProfile = true
-    @ObservationIgnored var url: URL?
     
     // MARK: - Methods
     func getImage(url: URL?, type: ImageType) {

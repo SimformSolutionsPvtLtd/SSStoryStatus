@@ -46,7 +46,7 @@ public struct StoryHeaderStyleConfiguration {
 ///
 /// To set the style pass and instance of type that confirms to `StoryHeaderStyle` protocol
 /// to `headerStyle` in
-/// ``SwiftUI/View/storyStyle(headerStyle:footerStyle:progressBarStyle:)``.
+/// ``SwiftUI/View/storyStyle(_:headerStyle:footerStyle:progressBarStyle:)``.
 ///
 /// You can use built-in style ``automatic`` with the default values or
 /// with customization like ``DefaultStoryHeaderStyle/dismissColor(_:)``.
