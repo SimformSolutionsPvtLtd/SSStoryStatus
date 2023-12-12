@@ -293,7 +293,7 @@ extension View {
     }
 }
 
-// MARK: - View Extensions
+// MARK: - Scale
 extension View {
     
     // MARK: - Scale

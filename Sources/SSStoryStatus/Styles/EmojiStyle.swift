@@ -146,9 +146,10 @@ public struct DefaultEmojiStyle: EmojiStyle {
     
     // MARK: - Vars & Lets
     /// The maximum number of column for emoji in single row.
-    var maxColumn: Int
+    public var maxColumn: Int
+    
     /// The size of emoji.
-    var emojiSize: CGFloat
+    public var emojiSize: CGFloat
     
     /// Creates a view that represents the body of a emoji view and behaviour.
     ///

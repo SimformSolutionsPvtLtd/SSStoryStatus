@@ -19,7 +19,7 @@ SSStoryStatus is a versatile and intuitive SwiftUI library designed to effortles
 
 |      Profile Listing       |      Story View       |      Message & Reaction     |
 |:--------------------------:|:---------------------:|:---------------------------:|
-| <img width=260px src="https://github.com/SimformSolutionsPvtLtd/SSStoryStatus/assets/147126103/90b850b7-8354-4209-a41d-e9e73401c075" /> | <img width=260px src="https://github.com/SimformSolutionsPvtLtd/SSStoryStatus/assets/147126103/8fc5a466-4cbe-487d-9d0f-6d1f91b4c77f" /> | <img width=260px src="https://github.com/SimformSolutionsPvtLtd/SSStoryStatus/assets/147126103/ec578a64-73f6-456d-8c94-681ae9126036" /> |
+| <img width=260px src="https://user-images.githubusercontent.com/147126103/290073480-42fed496-dd35-451e-a880-c45553dd0855.gif" /> | <img width=260px src="https://user-images.githubusercontent.com/147126103/290073494-43078c40-6afb-4da3-9a8f-cadecfcad442.gif" /> | <img width=260px src="https://user-images.githubusercontent.com/147126103/290073453-66dec87f-7eea-4e14-8c73-327cba246801.gif" /> |
 
 ## Features
 
@@ -29,6 +29,12 @@ SSStoryStatus is a versatile and intuitive SwiftUI library designed to effortles
 - [x] Callback on story seen
 - [x] Reaction emojis and message
 - [x] Story caption support
+
+## Requirements
+
+- iOS 17+
+- XCode 15+
+- Swift 5.9+
 
 ## Installation
 
@@ -71,6 +77,16 @@ $ pod install
 ```
 
 It will generate `<Project>.xcworkspace` file. From now on you should open the project using this file.
+
+<details>
+<summary><h4> Script Sandboxing Error</h4></summary>
+
+If you face build error `Command PhaseScriptExecution failed with a nonzero exit code` then follow this steps:
+
+Go to project `Build Settings` -. Search for `User Script Sandboxing` -> Set to `No`.
+
+Refrence - [User Script Sandboxing]
+</details>
 
 ## Usage
 
@@ -143,6 +159,10 @@ SSStoryStatus(users: users)
 
 For customizing SSStoryStatus please refer [Customization Guide].
 
+## Documentation
+
+__[Documentation]__ - Find the full API reference for more detailed documentation.
+
 ## Find this samples useful? :heart:
 
 Support it by joining [stargazers] :star: for this repository.
@@ -166,7 +186,7 @@ Distributed under the MIT license. See [LICENSE] for details.
 
 <!-- Reference links -->
 
-[Banner]:                   https://github.com/SimformSolutionsPvtLtd/SSStoryStatus/assets/147126103/c5cb3bc9-3a63-4260-a8ff-6345ef1559c0
+[Banner]:                   https://user-images.githubusercontent.com/147126103/290074193-8d2ff159-0026-43bc-bcb0-3fa8c9f5d718.png
 
 [SSStoryStatus]:            https://github.com/SimformSolutionsPvtLtd/SSStoryStatus
 
@@ -174,11 +194,15 @@ Distributed under the MIT license. See [LICENSE] for details.
 
 [Swift Package Index]:      https://swiftpackageindex.com/SimformSolutionsPvtLtd/SSStoryStatus
 
+[Documentation]:            https://swiftpackageindex.com/SimformSolutionsPvtLtd/SSStoryStatus/documentation/ssstorystatus
+
 [CocoaPods]:                https://cocoapods.org/pods/SSStoryStatus
 
 [CocoaPods.org]:            https://cocoapods.org/
 
-[Release]:                  https://github.com/SimformSolutionsPvtLtd/SSStoryStatus/releases/leatest
+[User Script Sandboxing]:   https://github.com/CocoaPods/CocoaPods/issues/11946#issuecomment-1587846325
+
+[Release]:                  https://github.com/SimformSolutionsPvtLtd/SSStoryStatus/releases/latest
 
 [Customization Guide]:      docs/Customization.md
 

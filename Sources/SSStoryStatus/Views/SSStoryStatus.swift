@@ -61,7 +61,7 @@ extension SSStoryStatus {
     ///
     /// - Parameter cache: The image cache to use.
     /// - Returns: A new instance that uses given cache.
-    public func changeImageCache<T: ImageCache>(cache: T) -> Self {
+    public func changeImageCache<T: ImageCache>(_ cache: T) -> Self {
         ImageCacheManager.shared.changeCache(cache)
         return self
     }
