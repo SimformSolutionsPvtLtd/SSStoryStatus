@@ -87,9 +87,12 @@ public protocol ProfileStyle {
     ///         HStack {
     ///             getImageView(model: imageModel)
     ///
-    ///             Text(user.name)
+    ///             Text(configuration.user.name)
     ///                 .font(.system(size: 18))
     ///         }
+    ///     }
+    ///     .onAppear {
+    ///         imageModel.getImage(url: URL(string: configuration.user.image)!, type: .profile)
     ///     }
     ///
     ///     // Get the profile image from image model asynchronously.

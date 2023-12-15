@@ -14,7 +14,7 @@ struct ContentView: View {
     var body: some View {
         VStack {
             SSStoryStatus(users: MockData().data)
-                .changeImageCache(cache: .storage)
+                .changeImageCache(.nscache)
                 .profileListStyle(
                     .automatic
                         .horizontalSpacing(24)

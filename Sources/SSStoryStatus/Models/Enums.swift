@@ -17,13 +17,6 @@ public enum StoryDirection {
     case next
 }
 
-// MARK: - ImageSize
-public enum ImageSize {
-    case small
-    case large
-    case fullscape
-}
-
 // MARK: - Image Caching Type
 // The type of image cache.
 public enum ImageCacheType {

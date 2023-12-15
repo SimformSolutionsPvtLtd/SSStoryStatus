@@ -156,10 +156,10 @@ public struct DefaultMessageStyle: MessageStyle {
 
     // MARK: - Vars & Lets
     /// The font that is used for message text.
-    var messageFont: Font?
+    public var messageFont: Font?
     
     /// The color for the message text.
-    var messageColor: Color
+    public var messageColor: Color
     
     // MARK: - Body
     /// Creates a view that represents the body of a message field.

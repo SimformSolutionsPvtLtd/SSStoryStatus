@@ -2,7 +2,7 @@
 
 ## Profile Listing
 
-![Profile Listing](https://github.com/SimformSolutionsPvtLtd/SSStoryStatus/assets/147126103/f9c61c56-5e2c-4871-8a38-d83d9b3be077)
+![Profile Listing-preview]
 
 To customize the profile listing you can use `profileListStyle` view modifier.
 
@@ -16,11 +16,11 @@ SSStoryStatus(users: users)
 You can use default style with `ProfileListStyle.automatic` and customize with available methods.
 Alternatively, you can provide custom type that confirms to `ProfileListStyle` protocol.
 
-Please refer `ProfileListStyle` documentation for more detail.
+Please refer [ProfileListStyle] documentation for more detail.
 
 ## Profile View
 
-![Profile View](https://github.com/SimformSolutionsPvtLtd/SSStoryStatus/assets/147126103/3632406f-f22d-4112-b4ee-4d790be98d2c)
+![Profile View-preview]
 
 Profile views displayed in profile listed can be customized with the `profileStyle` view modifier.
 
@@ -32,11 +32,11 @@ SSStoryStatus(users: users)
 You can use default style with `ProfileStyle.automatic` and customize with available methods.
 Alternatively, you can provide custom type that confirms to `ProfileStyle` protocol.
 
-Please refer `ProfileStyle` documentation for more detail.
+Please refer [ProfileStyle] documentation for more detail.
 
 ## Story Styling
 
-You `storyStyle` view modifier to configure different components of story view.
+Use `storyStyle` view modifier to configure different components of story view.
 
 To customize story like image story duration pass the instance of `StoryStyle`.
 
@@ -50,7 +50,7 @@ SSStoryStatus(users: mockData)
 
 ### Story Header
 
-![Story Header](https://github.com/SimformSolutionsPvtLtd/SSStoryStatus/assets/147126103/ba50c961-8e6a-4ba4-ad02-d66ae69f3ee3)
+![Story Header-preview]
 
 To customize story header you can pass type confirming to `StoryHeaderStyle` protocol.
 
@@ -62,11 +62,11 @@ SSStoryStatus(users: mockData)
     .storyStyle(headerStyle: .automatic.dismissColor(.gray))
 ```
 
-For detailed guide please refer `StoryHeaderStyle` documentation.
+For detailed guide please refer [StoryHeaderStyle] documentation.
 
 ### Story Footer
 
-![Story Footer](https://github.com/SimformSolutionsPvtLtd/SSStoryStatus/assets/147126103/0936b7f5-c354-4b21-bc8b-95cf3b647db0)
+![Story Footer-preview]
 
 To customize story footer you can pass type confirming to `StoryFooterStyle` protocol.
 
@@ -78,11 +78,11 @@ SSStoryStatus(users: mockData)
     .storyStyle(footerStyle: .automatic.captionColor(.white))
 ```
 
-For detailed guide please refer `StoryFooterStyle` documentation.
+For detailed guide please refer [StoryFooterStyle] documentation.
 
 ### Story Progress Bar
 
-![Progress Bar](https://github.com/SimformSolutionsPvtLtd/SSStoryStatus/assets/147126103/ea8ca824-5bb5-4885-8dfc-23f994382fa6)
+![Progress Bar-preview]
 
 To customize progress bar of story you have to pass instance of `ProgressBarStyle`.
 
@@ -94,11 +94,11 @@ SSStoryStatus(users: mockData)
     .storyStyle(progressBarStyle: .init(foreground: .linearGradient(colors: [.green, .orange], startPoint: .leading, endPoint: .trailing)))
 ```
 
-For detailed guide please refer `ProgressBarStyle` documentation.
+For detailed guide please refer [ProgressBarStyle] documentation.
 
 ## Emoji
 
-![Emoji](https://github.com/SimformSolutionsPvtLtd/SSStoryStatus/assets/147126103/33a31456-c9bc-44c0-9cb3-5d1c2fdd0bc2)
+![Emoji-preview]
 
 You can use custom emoji reactions by providing list of emojis  in `emoji` modifiers.
 
@@ -126,13 +126,13 @@ SSStoryStatus(users: mockData)
     .emoji(isEnabled: false)
 ```
 
-For detailed guide please refer `EmojiStyle` documentation.
+For detailed guide please refer [EmojiStyle] documentation.
 
 ## Message Field
 
-![Message Field](https://github.com/SimformSolutionsPvtLtd/SSStoryStatus/assets/147126103/0d0597c4-9d47-4e33-9f80-62453cb9d820)
+![Message Field-preview]
 
-You can provide custom placeholder of type `Text` by passing to `messageField` view moodifier.
+You can provide custom placeholder of type `Text` by passing to `messageField` view modifier.
 
 ```swift
 SSStoryStatus(users: mockData)
@@ -151,4 +151,57 @@ SSStoryStatus(users: mockData)
     .messageStyle(.automatic(messageColor: .white))
 ```
 
-For detailed guide please refer `MessageStyle` documentation.
+For detailed guide please refer [MessageStyle] documentation.
+
+## Image Cache
+
+There are two default implementations available `StorageImageCache` and `NSImageCache`.
+
+NSImageCache cache images into NSCache. Cache will be cleared each time application is closed.
+
+StorageImageCache stores the cached images into file system. Cache can be cleared by passing date object to cacheExpire parameter in init(users:sorted:cacheExpire:).
+
+You can also provide custom implementation of ImageCache by confirming to `ImageCache` protocol.
+
+To change image cache use ``changeImageCache``
+
+```swift
+SSStoryStatus(users: mockData)
+    .changeImageCache(.nscache)
+```
+
+For more details take a look at [ImageCache] documentation.
+
+<!-- Documentation Links -->
+
+[ProfileListStyle]: https://swiftpackageindex.com/SimformSolutionsPvtLtd/SSStoryStatus/documentation/ssstorystatus/ProfileListStyle
+
+[ProfileStyle]: https://swiftpackageindex.com/SimformSolutionsPvtLtd/SSStoryStatus/documentation/ssstorystatus/ProfileStyle
+
+[StoryHeaderStyle]: https://swiftpackageindex.com/SimformSolutionsPvtLtd/SSStoryStatus/documentation/ssstorystatus/StoryHeaderStyle
+
+[StoryFooterStyle]: https://swiftpackageindex.com/SimformSolutionsPvtLtd/SSStoryStatus/documentation/ssstorystatus/StoryFooterStyle
+
+[ProgressBarStyle]: https://swiftpackageindex.com/SimformSolutionsPvtLtd/SSStoryStatus/documentation/ssstorystatus/ProgressBarStyle
+
+[EmojiStyle]: https://swiftpackageindex.com/SimformSolutionsPvtLtd/SSStoryStatus/documentation/ssstorystatus/EmojiStyle
+
+[MessageStyle]: https://swiftpackageindex.com/SimformSolutionsPvtLtd/SSStoryStatus/documentation/ssstorystatus/MessageStyle
+
+[ImageCache]: https://swiftpackageindex.com/SimformSolutionsPvtLtd/SSStoryStatus/documentation/ssstorystatus/ImageCache
+
+<!-- Images -->
+
+[Profile Listing-preview]: https://user-images.githubusercontent.com/147126103/290075334-c3b3a402-9f2e-4922-8f5a-26b8b599e638.png
+
+[Profile View-preview]: https://user-images.githubusercontent.com/147126103/290075336-28c3554d-af6c-45f6-8d7b-ec8433a56416.png
+
+[Story Header-preview]: https://user-images.githubusercontent.com/147126103/290075343-ea6eb3f5-6803-4923-b4a8-8432bbcb3af0.png
+
+[Story Footer-preview]: https://user-images.githubusercontent.com/147126103/290075340-a35902fb-cba5-4217-b15b-266f777c43d0.png
+
+[Progress Bar-preview]: https://user-images.githubusercontent.com/147126103/290075337-30667315-edf0-40db-87e5-9c4003dbde6a.png
+
+[Emoji-preview]: https://user-images.githubusercontent.com/147126103/290075322-b6acd3a3-9959-4f5b-a947-5dce1caedc25.png
+
+[Message Field-preview]: https://user-images.githubusercontent.com/147126103/290075329-c44a8fde-a31c-4c09-bd25-82aa1478780a.png
