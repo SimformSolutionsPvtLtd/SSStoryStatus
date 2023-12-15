@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
     s.name              = 'SSStoryStatus'
-    s.version           = '0.0.1'
+    s.version           = '1.0.0'
     s.summary           = 'Integrate profile listing and story view with customizable components.'
     s.readme            = 'https://github.com/SimformSolutionsPvtLtd/SSStoryStatus/blob/master/README.md'
 
