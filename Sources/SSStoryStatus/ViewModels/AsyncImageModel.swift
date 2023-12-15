@@ -12,15 +12,15 @@ import Combine
 public class AsyncImageModel {
     
     // MARK: - Vars & Lets
-    var imageState: ImageState = .loading
-    var size: CGSize? = nil
-    var shouldResizeProfile = true
-    var url: URL?
+    public var imageState: ImageState = .loading
+    public var size: CGSize? = nil
+    public var shouldResizeProfile = true
+    public var url: URL?
     @ObservationIgnored private let cacheManager = ImageCacheManager.shared
     @ObservationIgnored private var cancellables: Set<AnyCancellable> = []
     
     // MARK: - Methods
-    func getImage(url: URL?, type: ImageType) {
+    public func getImage(url: URL?, type: ImageType) {
         guard !isURLSame(url) else { return }
         
         imageState = .loading
@@ -37,11 +37,11 @@ public class AsyncImageModel {
         }
     }
     
-    func enableResizing(size: CGSize) {
+    public func enableResizing(size: CGSize) {
         self.size = size
     }
     
-    func disableResizing() {
+    public func disableResizing() {
         size = nil
     }
     
@@ -98,14 +98,14 @@ public class AsyncImageModel {
 
 // MARK: - Enums
 // MARK: - Image Error
-enum ImageError: Error {
+public enum ImageError: Error {
     case invalidUrl
     case decodingError
     case unknownError
 }
 
 // MARK: - Image State
-enum ImageState {
+public enum ImageState {
     case loading
     case success(UIImage)
     case error(ImageError)

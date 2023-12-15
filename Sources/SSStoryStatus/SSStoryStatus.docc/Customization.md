@@ -158,3 +158,20 @@ SSStoryStatus(users: mockData)
 ```
 
 For detailed guide please refer ``MessageStyle`` documentation.
+
+## Image Cache
+
+There are two default implementations available ``ImageCache/storage`` and ``ImageCache/nscache``.
+
+NSImageCache cache images into NSCache. Cache will be cleared each time application is closed.
+
+StorageImageCache stores the cached images into file system. Cache can be cleared by passing date object to cacheExpire parameter in init(users:sorted:cacheExpire:).
+
+You can also provide custom implementation of ImageCache by confirming to `ImageCache` protocol.
+
+To change image cache use ``SSStoryStatus/changeImageCache(_:)`` 
+
+```swift
+SSStoryStatus(users: mockData)
+    .changeImageCache(.nscache)
+```

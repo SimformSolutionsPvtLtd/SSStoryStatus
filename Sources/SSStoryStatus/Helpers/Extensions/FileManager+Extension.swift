@@ -8,7 +8,7 @@
 import Foundation
 
 // MARK: - FileManager Extension
-public extension FileManager {
+extension FileManager {
     
     // MARK: - Clear Cache
     // Clear cache directory items older than given date
